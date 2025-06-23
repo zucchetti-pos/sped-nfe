@@ -49,17 +49,17 @@ trait TraitTagDetIBSCBS
             'gIBSUF_vIBSUF', //OBRIGATÓRIO Valor do IBS de competência da UF 13v2
             //dados IBS Municipal
             'gIBSMun_pIBSMun', //opcional Alíquota do IBS de competência do município 3v2-4
-                //OBRIGATÓRIO se vBC for informado
+            //OBRIGATÓRIO se vBC for informado
             'gIBSMun_pDif', //opcional Percentual do diferimento 3v2-4
             'gIBSMun_vDif', //opcional Valor do Diferimento 13v2
             'gIBSMun_vDevTrib', //opcional Valor do tributo devolvido 13v2
             'gIBSMun_pRedAliq', //opcional Percentual da redução de alíquota 3v2-4
             'gIBSMun_pAliqEfet', //opcional Alíquota Efetiva do IBS de competência do Município
-                // que será aplicada a BC 3v2-4
+            // que será aplicada a BC 3v2-4
             'gIBSMun_vIBSMun', //opcional Valor do IBS de competência do Município 13v2
             // dados CBS (imposto federal)
             'gCBS_pCBS', //opcional Alíquota da CBS 3v2-4
-                // OBRIGATÓRIO se vBC for informado
+            // OBRIGATÓRIO se vBC for informado
             'gCBS_pDif', //opcional Percentual do diferimento 3v2-4
             'gCBS_vDif', //opcional Valor do Diferimento 13v2
             'gCBS_vDevTrib', //opcional Valor do tributo devolvido 13v2
@@ -71,17 +71,17 @@ trait TraitTagDetIBSCBS
         $identificador = "UB12 <IBSCBS> -";
         //totalizador do IBS e CBS
         $this->stdIBSCBSTot->vBCIBSCBS += $std->vBC ?? 0;
-        $this->stdIBSCBSTot->gIBSUF->vDIF += $std->gIBSUF_pDif ?? 0;
+        $this->stdIBSCBSTot->gIBSUF->vDif += $std->gIBSUF_pDif ?? 0;
         $this->stdIBSCBSTot->gIBSUF->vDevTrib += $std->gIBSUF_vDevTrib ?? 0;
         $this->stdIBSCBSTot->gIBSUF->vIBSUF += $std->gIBSUF_vIBSUF ?? 0;
         $this->stdIBSCBSTot->vIBS += $std->gIBSUF_vIBSUF ?? 0;
 
-        $this->stdIBSCBSTot->gIBSMun->vDIF += $std->gIBSMun_vDif ?? 0;
+        $this->stdIBSCBSTot->gIBSMun->vDif += $std->gIBSMun_vDif ?? 0;
         $this->stdIBSCBSTot->gIBSMun->vDevTrib += $std->gIBSMun_vDevTrib ?? 0;
         $this->stdIBSCBSTot->gIBSMun->vIBSMun += $std->gIBSMun_vIBSMun ?? 0;
         $this->stdIBSCBSTot->vIBS += $std->gIBSMun_vIBSMun ?? 0;
 
-        $this->stdIBSCBSTot->gCBS->vDIF += $std->gCBS_vDif ?? 0;
+        $this->stdIBSCBSTot->gCBS->vDif += $std->gCBS_vDif ?? 0;
         $this->stdIBSCBSTot->gCBS->vDevTrib += $std->gCBS_vDevTrib ?? 0;
         $this->stdIBSCBSTot->vCBS += $std->gCBS_vCBS ?? 0;
 
@@ -166,7 +166,7 @@ trait TraitTagDetIBSCBS
                     $this->conditionalNumberFormatting($std->gIBSUF_pAliqEfet ?? null),
                     true,
                     "$identificador Alíquota Efetiva do IBS de competência das UF "
-                    . "que será aplicada a Base de Cálculo (pAliqEfet)"
+                        . "que será aplicada a Base de Cálculo (pAliqEfet)"
                 );
                 $gIBSUF->appendChild($gRed);
             }
@@ -235,7 +235,7 @@ trait TraitTagDetIBSCBS
                     $this->conditionalNumberFormatting($std->gIBSMun_pAliqEfet ?? null),
                     true,
                     "$identificador Alíquota Efetiva do IBS de competência das UF que será aplicada "
-                    . "a Base de Cálculo (pAliqEfet)"
+                        . "a Base de Cálculo (pAliqEfet)"
                 );
                 $gIBSMun->appendChild($gRed);
             }
@@ -303,7 +303,7 @@ trait TraitTagDetIBSCBS
                     $this->conditionalNumberFormatting($std->gCBS_pAliqEfet ?? null),
                     true,
                     "$identificador Alíquota Efetiva do IBS de competência das UF que será aplicada "
-                    . "a Base de Cálculo (pAliqEfet)"
+                        . "a Base de Cálculo (pAliqEfet)"
                 );
                 $gCBS->appendChild($gRed);
             }
@@ -358,7 +358,7 @@ trait TraitTagDetIBSCBS
             $std->cClassTribReg,
             true,
             "$identificador Informar qual seria o cClassTrib caso não cumprida a condição "
-            . "resolutória/suspensiva (cClassTribReg)"
+                . "resolutória/suspensiva (cClassTribReg)"
         );
         $this->dom->addChild(
             $gTribRegular,

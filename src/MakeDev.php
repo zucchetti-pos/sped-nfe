@@ -42,7 +42,7 @@ use stdClass;
 use DOMElement;
 use DateTime;
 
-final class MakeDev
+class MakeDev
 {
     use TraitTagInfNfe;
     use TraitTagIde;
@@ -734,7 +734,7 @@ final class MakeDev
                 if (count($nves) > 8) {
                     $this->errors[] = "I05a <NVE> Item: $item - As tags NVE são limitadas a 8 repetições "
                         . "por item da NFe";
-                    $nves = array_slice($nves, 0, 8) ;
+                    $nves = array_slice($nves, 0, 8);
                 }
                 $node = $prod->getElementsByTagName("NCM")->item(0);
                 foreach ($nves as $nve) {
@@ -747,7 +747,7 @@ final class MakeDev
                 if (count($gcs) > 4) {
                     $this->errors[] = "<gCred> Item: $item - As tags gCred são limitadas a 4 "
                         . "repetições por item da NFe";
-                    $gbs = array_slice($gcs, 0, 4) ;
+                    $gbs = array_slice($gcs, 0, 4);
                 }
                 $node = $prod->getElementsByTagName("EXTIPI")->item(0);
                 if (empty($node)) {
@@ -1128,46 +1128,46 @@ final class MakeDev
             //todas as operações exceto venda de veiculos novas
             $vitem = round(
                 $vProd
-                - $vDesc
-                - $icmsdeson
-                + $vICMSST
-                + $vICMSMonoReten
-                + $vFCPST
-                + $vFrete
-                + $vSeg
-                + $vOutro
-                + $vII
-                + $vIPI
-                + $vIPIDevol
-                + $vServ
-                + $vPIS
-                + $vCOFINS
-                + $vIBSUF  //2026 remover esse campo da soma
-                + $vIBSMun //2026 remover esse campo da soma
-                + $vCBS    //2026 remover esse campo da soma
-                + $vIS     //2026 remover esse campo da soma
-                + $vTotIBSMonoItem  //2026 remover esse campo da soma
-                + $vTotCBSMonoItem,
+                    - $vDesc
+                    - $icmsdeson
+                    + $vICMSST
+                    + $vICMSMonoReten
+                    + $vFCPST
+                    + $vFrete
+                    + $vSeg
+                    + $vOutro
+                    + $vII
+                    + $vIPI
+                    + $vIPIDevol
+                    + $vServ
+                    + $vPIS
+                    + $vCOFINS
+                    + $vIBSUF  //2026 remover esse campo da soma
+                    + $vIBSMun //2026 remover esse campo da soma
+                    + $vCBS    //2026 remover esse campo da soma
+                    + $vIS     //2026 remover esse campo da soma
+                    + $vTotIBSMonoItem  //2026 remover esse campo da soma
+                    + $vTotCBSMonoItem,
                 2
             ); //2026 remover esse campo da soma
         } else {
             //venda de veiculos novos
             $vitem = round(
                 $vProd
-                - $vDesc
-                - $icmsdeson
-                + $vFrete
-                + $vSeg
-                + $vOutro
-                + $vII
-                + $vIPI
-                + $vServ
-                + $vPIS
-                + $vCOFINS
-                + $vIBSUF  //2026 remover esse campo da soma
-                + $vIBSMun //2026 remover esse campo da soma
-                + $vCBS    //2026 remover esse campo da soma
-                + $vIS,
+                    - $vDesc
+                    - $icmsdeson
+                    + $vFrete
+                    + $vSeg
+                    + $vOutro
+                    + $vII
+                    + $vIPI
+                    + $vServ
+                    + $vPIS
+                    + $vCOFINS
+                    + $vIBSUF  //2026 remover esse campo da soma
+                    + $vIBSMun //2026 remover esse campo da soma
+                    + $vCBS    //2026 remover esse campo da soma
+                    + $vIS,
                 2
             );     //2026 remover esse campo da soma
         }
