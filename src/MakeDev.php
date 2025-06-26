@@ -570,6 +570,9 @@ class MakeDev
         $this->stdIBSCBSTot->gCBS = new stdClass();
         $this->stdIBSCBSTot->gCBS->vDif = 0;
         $this->stdIBSCBSTot->gCBS->vDevTrib = 0;
+        $this->stdIBSCBSTot->gCBS->vCBS = 0;
+        $this->stdIBSCBSTot->gCBS->vCredPres = 0;
+        $this->stdIBSCBSTot->gCBS->vCredPresCondSus = 0;
 
         $this->stdIBSCBSTot->gMono = new stdClass();
         $this->stdIBSCBSTot->gMono->vIBSMono = 0;
@@ -1258,7 +1261,7 @@ class MakeDev
      */
     protected function addTagAutXML()
     {
-        if (count($this->aAutXML) == 0) {
+        if (is_countable($this->aAutXML) && count($this->aAutXML) == 0) {
             return;
         }
         if (empty($this->infNFe)) {
