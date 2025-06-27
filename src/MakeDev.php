@@ -745,7 +745,7 @@ class MakeDev
                 }
             }
             //gCred => prod até 4 registros PL_010
-            if (!empty($this->aGCred[$item]) && $this->schema > 9) {
+            if (!empty($this->aGCred[$item])) {
                 $gcs = $this->aGCred[$item];
                 if (count($gcs) > 4) {
                     $this->errors[] = "<gCred> Item: $item - As tags gCred são limitadas a 4 "
