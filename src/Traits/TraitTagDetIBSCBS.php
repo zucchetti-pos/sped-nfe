@@ -4,6 +4,7 @@ namespace NFePHP\NFe\Traits;
 
 use DateTime;
 use NFePHP\Common\DOMImproved as Dom;
+use NFePHP\NFe\MakeDev;
 use stdClass;
 use DOMElement;
 use DOMException;
@@ -23,9 +24,6 @@ use DOMException;
  */
 trait TraitTagDetIBSCBS
 {
-    public const IBS_CRED_PRES_SUS_BLOCKED_UNTIL = '01-01-2033';
-    public const CBS_CRED_PRES_SUS_BLOCKED_UNTIL = '01-01-2027';
-
     /**
      * Informações do Imposto de Bens e Serviços - IBS e da Contribuição de Bens e Serviços - CBS UB12 pai M01
      * $this->>aIBSCBS[$item]
@@ -862,14 +860,14 @@ trait TraitTagDetIBSCBS
     private function isCBSCredPresSusBlocked()
     {
         $currentDate = new DateTime;
-        $deadline = new DateTime(self::CBS_CRED_PRES_SUS_BLOCKED_UNTIL);
+        $deadline = new DateTime(MakeDev::CBS_CRED_PRES_SUS_BLOCKED_UNTIL);
         return $currentDate > $deadline;
     }
 
     private function isIBSCredPresSusBlocked()
     {
         $currentDate = new DateTime;
-        $deadline = new DateTime(self::IBS_CRED_PRES_SUS_BLOCKED_UNTIL);
+        $deadline = new DateTime(MakeDev::IBS_CRED_PRES_SUS_BLOCKED_UNTIL);
         return $currentDate > $deadline;
     }
 }
