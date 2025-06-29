@@ -2,6 +2,7 @@
 
 namespace NFePHP\NFe\Traits;
 
+use DateTime;
 use NFePHP\Common\DOMImproved as Dom;
 use stdClass;
 use DOMElement;
@@ -22,6 +23,9 @@ use DOMException;
  */
 trait TraitTagDetIBSCBS
 {
+    public const IBS_CRED_PRES_SUS_BLOCKED_UNTIL = '01-01-2033';
+    public const CBS_CRED_PRES_SUS_BLOCKED_UNTIL = '01-01-2027';
+
     /**
      * Informações do Imposto de Bens e Serviços - IBS e da Contribuição de Bens e Serviços - CBS UB12 pai M01
      * $this->>aIBSCBS[$item]
@@ -450,13 +454,14 @@ trait TraitTagDetIBSCBS
             true,
             "$identificador Valor do Crédito Presumido (vCredPres)"
         );
-        $this->dom->addChild(
-            $gIBSCredPres,
-            "vCredPresCondSus",
-            $this->conditionalNumberFormatting($std->vCredPresCondSus),
-            true,
-            "$identificador Valor do Crédito Presumido em condição suspensiva. (vCredPres)"
-        );
+        if ($this->isIBSCredPresSusBlocked())
+            $this->dom->addChild(
+                $gIBSCredPres,
+                "vCredPresCondSus",
+                $this->conditionalNumberFormatting($std->vCredPresCondSus),
+                true,
+                "$identificador Valor do Crédito Presumido em condição suspensiva. (vCredPres)"
+            );
         $this->aIBSCredPres[$std->item] = $gIBSCredPres;
         return $gIBSCredPres;
     }
@@ -505,13 +510,16 @@ trait TraitTagDetIBSCBS
             true,
             "$identificador Valor do Crédito Presumido (vCredPres)"
         );
-        $this->dom->addChild(
-            $gCBSCredPres,
-            "vCredPresCondSus",
-            $this->conditionalNumberFormatting($std->vCredPresCondSus),
-            true,
-            "$identificador Valor do Crédito Presumido em condição suspensiva. (vCredPres)"
-        );
+
+        if ($this->isCBSCredPresSusBlocked())
+            $this->dom->addChild(
+                $gCBSCredPres,
+                "vCredPresCondSus",
+                $this->conditionalNumberFormatting($std->vCredPresCondSus),
+                true,
+                "$identificador Valor do Crédito Presumido em condição suspensiva. (vCredPres)"
+            );
+
         $this->aCBSCredPres[$std->item] = $gCBSCredPres;
         return $gCBSCredPres;
     }
@@ -849,5 +857,19 @@ trait TraitTagDetIBSCBS
         );
         $this->aGCredPresIBSZFM[$std->item] = $cred;
         return $cred;
+    }
+
+    private function isCBSCredPresSusBlocked()
+    {
+        $currentDate = new DateTime;
+        $deadline = new DateTime(self::CBS_CRED_PRES_SUS_BLOCKED_UNTIL);
+        return $currentDate > $deadline;
+    }
+
+    private function isIBSCredPresSusBlocked()
+    {
+        $currentDate = new DateTime;
+        $deadline = new DateTime(self::IBS_CRED_PRES_SUS_BLOCKED_UNTIL);
+        return $currentDate > $deadline;
     }
 }
