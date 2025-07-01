@@ -609,7 +609,7 @@ trait TraitTagDetIBSCBS
             'vIBSMonoReten',
             'adRemCBSReten',
             'vCBSMonoReten',
-            'qBCMonoReten',
+            'qBCMonoRet',
             'adRemIBSRet',
             'vIBSMonoRet',
             'adRemCBSRet',
