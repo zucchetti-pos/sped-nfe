@@ -42,7 +42,7 @@ use stdClass;
 use DOMElement;
 use DateTime;
 
-final class MakeDev
+class MakeDev
 {
     use TraitTagInfNfe;
     use TraitTagIde;
@@ -76,8 +76,10 @@ final class MakeDev
     use TraitTagExporta;
     use TraitTagCompra;
     use TraitTagCana;
-    use TraitTagAgropecuario; //Não Existe na PL_010
+    use TraitTagAgropecuario;
     use TraitTagTotal;
+    public const IBS_CRED_PRES_SUS_BLOCKED_UNTIL = '01-01-2033';
+    public const CBS_CRED_PRES_SUS_BLOCKED_UNTIL = '01-01-2027';
 
     /**
      * @var int
@@ -531,6 +533,10 @@ final class MakeDev
         $this->stdTot->vOutro = 0;
         $this->stdTot->vNF = 0;
         $this->stdTot->vTotTrib = 0;
+        //PL_010
+        $this->stdTot->vIBS = 0;
+        $this->stdTot->vCBS = 0;
+        $this->stdTot->vIS = 0;
         $this->stdTot->vNFTot = 0;
 
         $this->stdISSQNTot = new stdClass();
@@ -570,6 +576,9 @@ final class MakeDev
         $this->stdIBSCBSTot->gCBS = new stdClass();
         $this->stdIBSCBSTot->gCBS->vDif = 0;
         $this->stdIBSCBSTot->gCBS->vDevTrib = 0;
+        $this->stdIBSCBSTot->gCBS->vCBS = 0;
+        $this->stdIBSCBSTot->gCBS->vCredPres = 0;
+        $this->stdIBSCBSTot->gCBS->vCredPresCondSus = 0;
 
         $this->stdIBSCBSTot->gMono = new stdClass();
         $this->stdIBSCBSTot->gMono->vIBSMono = 0;
@@ -649,6 +658,8 @@ final class MakeDev
     public function render(): string
     {
         try {
+            //calcula total vNF
+            $this->buildTotal();
             //cria a tag NFe
             $this->buildNFe();
             //tag NFref => tag ide
@@ -674,6 +685,7 @@ final class MakeDev
             $this->addTagDet();
             //tag total => tag infNfe
             $this->addTagTotal();
+
             //tag transp => tag infNfe
             $this->addTagTransp();
             //tag cobr => tag infNFe
@@ -734,7 +746,7 @@ final class MakeDev
                 if (count($nves) > 8) {
                     $this->errors[] = "I05a <NVE> Item: $item - As tags NVE são limitadas a 8 repetições "
                         . "por item da NFe";
-                    $nves = array_slice($nves, 0, 8) ;
+                    $nves = array_slice($nves, 0, 8);
                 }
                 $node = $prod->getElementsByTagName("NCM")->item(0);
                 foreach ($nves as $nve) {
@@ -742,12 +754,12 @@ final class MakeDev
                 }
             }
             //gCred => prod até 4 registros PL_010
-            if (!empty($this->aGCred[$item]) && $this->schema > 9) {
+            if (!empty($this->aGCred[$item])) {
                 $gcs = $this->aGCred[$item];
                 if (count($gcs) > 4) {
                     $this->errors[] = "<gCred> Item: $item - As tags gCred são limitadas a 4 "
                         . "repetições por item da NFe";
-                    $gbs = array_slice($gcs, 0, 4) ;
+                    $gbs = array_slice($gcs, 0, 4);
                 }
                 $node = $prod->getElementsByTagName("EXTIPI")->item(0);
                 if (empty($node)) {
@@ -941,21 +953,16 @@ final class MakeDev
                         //add gTribRegular
                         $gIBSCBS->appendChild($this->aGTribRegular[$item]);
                     }
-                    if (!empty($this->aIBSCBSCredPres[$item])  && !empty($gIBSCBS)) {
-                        $tribreg = $this->aIBSCBSCredPres[$item];
-                        $gIBSCredPres = $tribreg->getElementsByTagName("gIBSCredPres")->item(0);
-                        if (!empty($gIBSCredPres)) {
-                            //add gIBSCredPres
-                            $gIBSCBS->appendChild($gIBSCredPres);
-                        }
-                        //add gCBSCredPres
-                        $gCBSCredPres = $tribreg->getElementsByTagName("gIBSCredPres")->item(0);
-                        if (!empty($gCBSCredPres)) {
-                            //add gCBSCredPres
-                            $ibscbs->appendChild($gCBSCredPres);
-                        }
+
+                    if (!empty($this->aCBSCredPres[$item]) && !empty($gIBSCBS)) {
+                        $gIBSCBS->appendChild($this->aCBSCredPres[$item]);
                     }
-                    //CHICE gIBSCBS ou gIBSCBSMono
+
+                    if (!empty($this->aIBSCredPres[$item]) && !empty($gIBSCBS)) {
+                        $gIBSCBS->appendChild($this->aIBSCredPres[$item]);
+                    }
+
+                    //CHICE gIBSCBS, gIBSCBSMono, gTranfCred
                     //existe o grupo gIBSCBS no node IBSCBS ?
                     $gIBSCBS = $ibscbs->getElementsByTagName("gIBSCBS")->item(0);
                     if (!empty($gIBSCBS)) {
@@ -964,9 +971,8 @@ final class MakeDev
                     } elseif (!empty($this->aGIBSCBSMono[$item])) {
                         //não existe gIBSCBS, então add gIBSCBSMono
                         $this->addTag($ibscbs, $this->aGIBSCBSMono[$item], 'Falta a tag IBSCBS!');
-                    }
-                    //gTranfCred
-                    if (!empty($this->aGTransfCred[$item])) {
+                    } elseif (!empty($this->aGTransfCred[$item])) {
+                        //gTranfCred
                         $this->addTag($ibscbs, $this->aGTransfCred[$item], 'Falta a tag IBSCBS!');
                     }
                     //gCredPresIBSZFM
@@ -1004,6 +1010,54 @@ final class MakeDev
             }
             $this->addTag($this->infNFe, $det, 'Fala a tag infNFe!');
         }
+    }
+
+    /**
+     * Grupo Totais da NF-e W01 pai A01
+     * tag NFe/infNFe/total
+     */
+    protected function buildTotal()
+    {
+        //round all values
+        $this->stdTot->vBC = round($this->stdTot->vBC, 2);
+        $this->stdTot->vICMS = round($this->stdTot->vICMS, 2);
+        $this->stdTot->vICMSDeson = round($this->stdTot->vICMSDeson, 2);
+        $this->stdTot->vFCP = round($this->stdTot->vFCP, 2);
+        $this->stdTot->vFCPUFDest = round($this->stdTot->vFCPUFDest, 2);
+        $this->stdTot->vICMSUFDest = round($this->stdTot->vICMSUFDest, 2);
+        $this->stdTot->vICMSUFRemet = round($this->stdTot->vICMSUFRemet, 2);
+        $this->stdTot->vBCST = round($this->stdTot->vBCST, 2);
+        $this->stdTot->vST = round($this->stdTot->vST, 2);
+        $this->stdTot->vFCPST = round($this->stdTot->vFCPST, 2);
+        $this->stdTot->vFCPSTRet = round($this->stdTot->vFCPSTRet, 2);
+        $this->stdTot->vProd = round($this->stdTot->vProd, 2);
+        $this->stdTot->vFrete = round($this->stdTot->vFrete, 2);
+        $this->stdTot->vSeg = round($this->stdTot->vSeg, 2);
+        $this->stdTot->vDesc = round($this->stdTot->vDesc, 2);
+        $this->stdTot->vII = round($this->stdTot->vII, 2);
+        $this->stdTot->vIPI = round($this->stdTot->vIPI, 2);
+        $this->stdTot->vIPIDevol = round($this->stdTot->vIPIDevol, 2);
+        $this->stdTot->vPIS = round($this->stdTot->vPIS, 2);
+        $this->stdTot->vCOFINS = round($this->stdTot->vCOFINS, 2);
+        $this->stdTot->vOutro = round($this->stdTot->vOutro, 2);
+        $this->stdTot->vNF = round($this->stdTot->vNF, 2);
+        $this->stdTot->vTotTrib = round($this->stdTot->vTotTrib, 2);
+
+        $this->stdTot->vNF = $this->stdTot->vProd
+            - $this->stdTot->vDesc
+            - $this->stdTot->vICMSDeson
+            + $this->stdTot->vST
+            + $this->stdTot->vFCPST
+            + $this->stdTot->vICMSMonoReten
+            + $this->stdTot->vFrete
+            + $this->stdTot->vSeg
+            + $this->stdTot->vOutro
+            + $this->stdTot->vII
+            + $this->stdTot->vIPI
+            + $this->stdTot->vIPIDevol
+            + $this->stdISSQNTot->vServ
+            + $this->stdTot->vPISST
+            + $this->stdTot->vCOFINSST;
     }
 
     /**
@@ -1134,46 +1188,46 @@ final class MakeDev
             //todas as operações exceto venda de veiculos novas
             $vitem = round(
                 $vProd
-                - $vDesc
-                - $icmsdeson
-                + $vICMSST
-                + $vICMSMonoReten
-                + $vFCPST
-                + $vFrete
-                + $vSeg
-                + $vOutro
-                + $vII
-                + $vIPI
-                + $vIPIDevol
-                + $vServ
-                + $vPIS
-                + $vCOFINS
-                + $vIBSUF  //2026 remover esse campo da soma
-                + $vIBSMun //2026 remover esse campo da soma
-                + $vCBS    //2026 remover esse campo da soma
-                + $vIS     //2026 remover esse campo da soma
-                + $vTotIBSMonoItem  //2026 remover esse campo da soma
-                + $vTotCBSMonoItem,
+                    - $vDesc
+                    - $icmsdeson
+                    + $vICMSST
+                    + $vICMSMonoReten
+                    + $vFCPST
+                    + $vFrete
+                    + $vSeg
+                    + $vOutro
+                    + $vII
+                    + $vIPI
+                    + $vIPIDevol
+                    + $vServ
+                    + $vPIS
+                    + $vCOFINS
+                    + $vIBSUF  //2026 remover esse campo da soma
+                    + $vIBSMun //2026 remover esse campo da soma
+                    + $vCBS    //2026 remover esse campo da soma
+                    + $vIS     //2026 remover esse campo da soma
+                    + $vTotIBSMonoItem  //2026 remover esse campo da soma
+                    + $vTotCBSMonoItem,
                 2
             ); //2026 remover esse campo da soma
         } else {
             //venda de veiculos novos
             $vitem = round(
                 $vProd
-                - $vDesc
-                - $icmsdeson
-                + $vFrete
-                + $vSeg
-                + $vOutro
-                + $vII
-                + $vIPI
-                + $vServ
-                + $vPIS
-                + $vCOFINS
-                + $vIBSUF  //2026 remover esse campo da soma
-                + $vIBSMun //2026 remover esse campo da soma
-                + $vCBS    //2026 remover esse campo da soma
-                + $vIS,
+                    - $vDesc
+                    - $icmsdeson
+                    + $vFrete
+                    + $vSeg
+                    + $vOutro
+                    + $vII
+                    + $vIPI
+                    + $vServ
+                    + $vPIS
+                    + $vCOFINS
+                    + $vIBSUF  //2026 remover esse campo da soma
+                    + $vIBSMun //2026 remover esse campo da soma
+                    + $vCBS    //2026 remover esse campo da soma
+                    + $vIS,
                 2
             );     //2026 remover esse campo da soma
         }
@@ -1238,7 +1292,7 @@ final class MakeDev
      */
     protected function addTagDest()
     {
-        if (is_null($this->enderDest) && is_null($this->dest)) {
+        if (empty($this->dest)) {
             return;
         }
         if (empty($this->infNFe)) {
@@ -1247,7 +1301,7 @@ final class MakeDev
         }
         //verifica se o endereço do destinatário já existe na tag dest
         $enddest = $this->dest->getElementsByTagName('enderDest')->item(0) ?? null;
-        if (is_null($enddest) && is_null($this->enderDest)) {
+        if (is_null($enddest) && !is_null($this->enderDest)) {
             $node = $this->dest->getElementsByTagName("indIEDest")->item(0);
             if (!isset($node)) {
                 $node = $this->dest->getElementsByTagName("IE")->item(0);
@@ -1263,7 +1317,7 @@ final class MakeDev
      */
     protected function addTagAutXML()
     {
-        if (count($this->aAutXML) == 0) {
+        if (is_countable($this->aAutXML) && count($this->aAutXML) == 0) {
             return;
         }
         if (empty($this->infNFe)) {
@@ -1399,8 +1453,8 @@ final class MakeDev
     protected function addTagAgropecuario()
     {
         //o schema estabelece qual PL está sendo usado para a montagem da NFe/NFCe
-        if ($this->schema > 9) {
-            //Esta tag foi removida no PL_010
+        if ($this->schema < 10) {
+            //Esta tag não existe na PL_009
             return;
         }
         if (!empty($this->agropecuarioGuia)) {
@@ -1530,10 +1584,12 @@ final class MakeDev
             }
             $this->addTag($total, $this->IBSCBSTot);
             //campo vNFTot PL_010
+            //vNFTot é a soma de vItem, isso inclue mais valor do que vNF / vIBS / vCBS e vIS
+            // $vNFTot = $this->stdTot->vNF + $this->stdTot->vIBS + $this->stdTot->vCBS + $this->stdTot->vIS;
             $this->dom->addChild(
                 $total,
                 "vNFTot",
-                $this->conditionalNumberFormatting($this->stdTot->vNFTot, 2),
+                $this->conditionalNumberFormatting($this->stdTot->vNF, 2),
                 false,
                 "$identificador Valor total da NF-e com IBS / CBS / IS"
             );

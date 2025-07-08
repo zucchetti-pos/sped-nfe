@@ -136,7 +136,7 @@ trait TraitTagTotal
             $this->conditionalNumberFormatting($vFCPUFDest),
             false,
             "$identificador Valor total do ICMS relativo ao Fundo de Combate à Pobreza(FCP) "
-            . "para a UF de destino"
+                . "para a UF de destino"
         );
         $this->dom->addChild(
             $ICMSTot,
@@ -159,7 +159,7 @@ trait TraitTagTotal
             $this->conditionalNumberFormatting($vFCP),
             false,
             "$identificador Valor total do ICMS relativo ao Fundo de Combate à Pobreza(FCP) "
-            . "para a UF de destino"
+                . "para a UF de destino"
         );
         $this->dom->addChild(
             $ICMSTot,
@@ -182,7 +182,7 @@ trait TraitTagTotal
             $this->conditionalNumberFormatting($vFCPST),
             false, //true para 4.00
             "$identificador Valor Total do FCP (Fundo de Combate à Pobreza) "
-            . "retido por substituição tributária"
+                . "retido por substituição tributária"
         );
         //incluso na 4.00
         $this->dom->addChild(
@@ -191,7 +191,7 @@ trait TraitTagTotal
             $this->conditionalNumberFormatting($vFCPSTRet),
             false, //true para 4.00
             "$identificador Valor Total do FCP retido anteriormente por "
-            . "Substituição Tributária"
+                . "Substituição Tributária"
         );
         //incluso NT 2023.001-1.10
         $this->dom->addChild(
@@ -475,6 +475,7 @@ trait TraitTagTotal
         $std = $this->equilizeParameters($std, $possible);
         $identificador = "<ISTot> -";
         $vIS = $std->vIS ?? ($this->stdIStot->vIS ?? 0);
+        $this->stdTot->vIS = $vIS;
         $istot = $this->dom->createElement('ISTot');
         $this->dom->addChild(
             $istot,
@@ -517,6 +518,7 @@ trait TraitTagTotal
             'gMono_vCBSMonoReten',
             'gMono_vIBSMonoRet',
             'gMono_vCBSMonoRet',
+            'vNFTot'
         ];
         $std = $this->equilizeParameters($std, $possible);
         $identificador = "<IBSCBSTot> -";
@@ -533,15 +535,20 @@ trait TraitTagTotal
         $gIBSMun_vIBSMun = $std->gIBSMun_vIBSMun ?? $this->stdIBSCBSTot->gIBSMun->vIBSMun;
         $gCBS_vDif = $std->gCBS_vDif ?? $this->stdIBSCBSTot->gCBS->vDif;
         $gCBS_vDevTrib = $std->gCBS_vDevTrib ?? $this->stdIBSCBSTot->gCBS->vDevTrib;
-        $gCBS_vCBS = $std->gCBS_vCBS ?? $this->stdIBSCBSTot->gCBS->vCBS;
-        $gCBS_vCredPres = $std->gCBS_vCredPres ?? $this->stdIBSCBSTot->gCBS->vCredPres;
-        $gCBS_vCredPresCondSus = $std->gCBS_vCredPresCondSus ?? $this->stdIBSCBSTot->gCBS->vCredPresCondSus;
+        $gCBS_vCBS = $std->gCBS_vCBS ?? $this->stdIBSCBSTot->vCBS;
+        $gCBS_vCredPres = $std->gCBS_vCredPres ?? $this->stdIBSCBSTot->vCredPres;
+        $gCBS_vCredPresCondSus = $std->gCBS_vCredPresCondSus ?? $this->stdIBSCBSTot->vCredPresCondSus;
         $gMono_vIBSMono = $std->gMono_vIBSMono ?? $this->stdIBSCBSTot->gMono->vIBSMono;
         $gMono_vCBSMono = $std->gMono_vCBSMono ?? $this->stdIBSCBSTot->gMono->vCBSMono;
         $gMono_vIBSMonoReten = $std->gMono_vIBSMonoReten ?? $this->stdIBSCBSTot->gMono->vIBSMonoReten;
         $gMono_vCBSMonoReten = $std->gMono_vCBSMonoReten ?? $this->stdIBSCBSTot->gMono->vCBSMonoReten;
         $gMono_vIBSMonoRet = $std->gMono_vIBSMonoRet ?? $this->stdIBSCBSTot->gMono->vIBSMonoRet;
         $gMono_vCBSMonoRet = $std->gMono_vCBSMonoRet ?? $this->stdIBSCBSTot->gMono->vCBSMonoRet;
+        $this->stdTot->vNFTot = $std->vNFTot ?? 0;
+
+        //totalizador final
+        $this->stdTot->vIBS = $gIBS_vIBS;
+        $this->stdTot->vCBS = $gCBS_vCBS;
 
         $ibstot = $this->dom->createElement('IBSCBSTot');
         $this->dom->addChild(
@@ -551,7 +558,7 @@ trait TraitTagTotal
             true,
             "$identificador Valor total da BC do IBS e da CBS"
         );
-        if (!empty($std->gIBS_vIBS)) {
+        if (!empty($gIBS_vIBS)) {
             $gIBS = $this->dom->createElement('gIBS');
             $gIBSUF = $this->dom->createElement('gIBSUF');
             $this->dom->addChild(
@@ -622,7 +629,7 @@ trait TraitTagTotal
             );
             $this->dom->appChild($ibstot, $gIBS);
         }
-        if (!empty($std->gCBS_vCBS)) {
+        if (!empty($gCBS_vCBS)) {
             $gCBS = $this->dom->createElement('gCBS');
             $this->dom->addChild(
                 $gCBS,
@@ -661,7 +668,7 @@ trait TraitTagTotal
             );
             $this->dom->appChild($ibstot, $gCBS);
         }
-        if (!empty($std->gMono_vIBSMono) || !empty($std->gMono_vCBSMono)) {
+        if (!empty($gMono_vIBSMono) || !empty($gMono_vCBSMono)) {
             $gMono = $this->dom->createElement('gMono');
             $this->dom->addChild(
                 $gMono,
