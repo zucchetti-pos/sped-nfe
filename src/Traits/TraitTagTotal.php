@@ -136,7 +136,7 @@ trait TraitTagTotal
             $this->conditionalNumberFormatting($vFCPUFDest),
             false,
             "$identificador Valor total do ICMS relativo ao Fundo de Combate à Pobreza(FCP) "
-            . "para a UF de destino"
+                . "para a UF de destino"
         );
         $this->dom->addChild(
             $ICMSTot,
@@ -159,7 +159,7 @@ trait TraitTagTotal
             $this->conditionalNumberFormatting($vFCP),
             false,
             "$identificador Valor total do ICMS relativo ao Fundo de Combate à Pobreza(FCP) "
-            . "para a UF de destino"
+                . "para a UF de destino"
         );
         $this->dom->addChild(
             $ICMSTot,
@@ -182,7 +182,7 @@ trait TraitTagTotal
             $this->conditionalNumberFormatting($vFCPST),
             false, //true para 4.00
             "$identificador Valor Total do FCP (Fundo de Combate à Pobreza) "
-            . "retido por substituição tributária"
+                . "retido por substituição tributária"
         );
         //incluso na 4.00
         $this->dom->addChild(
@@ -191,7 +191,7 @@ trait TraitTagTotal
             $this->conditionalNumberFormatting($vFCPSTRet),
             false, //true para 4.00
             "$identificador Valor Total do FCP retido anteriormente por "
-            . "Substituição Tributária"
+                . "Substituição Tributária"
         );
         //incluso NT 2023.001-1.10
         $this->dom->addChild(
@@ -517,6 +517,7 @@ trait TraitTagTotal
             'gMono_vCBSMonoReten',
             'gMono_vIBSMonoRet',
             'gMono_vCBSMonoRet',
+            'vNFTot'
         ];
         $std = $this->equilizeParameters($std, $possible);
         $identificador = "<IBSCBSTot> -";
@@ -542,6 +543,7 @@ trait TraitTagTotal
         $gMono_vCBSMonoReten = $std->gMono_vCBSMonoReten ?? $this->stdIBSCBSTot->gMono->vCBSMonoReten;
         $gMono_vIBSMonoRet = $std->gMono_vIBSMonoRet ?? $this->stdIBSCBSTot->gMono->vIBSMonoRet;
         $gMono_vCBSMonoRet = $std->gMono_vCBSMonoRet ?? $this->stdIBSCBSTot->gMono->vCBSMonoRet;
+        $this->stdTot->vNFTot = $std->vNFTot ?? 0;
 
         $ibstot = $this->dom->createElement('IBSCBSTot');
         $this->dom->addChild(
