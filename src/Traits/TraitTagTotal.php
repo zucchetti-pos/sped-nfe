@@ -475,6 +475,7 @@ trait TraitTagTotal
         $std = $this->equilizeParameters($std, $possible);
         $identificador = "<ISTot> -";
         $vIS = $std->vIS ?? ($this->stdIStot->vIS ?? 0);
+        $this->stdTot->vIS = $vIS;
         $istot = $this->dom->createElement('ISTot');
         $this->dom->addChild(
             $istot,
@@ -545,6 +546,10 @@ trait TraitTagTotal
         $gMono_vCBSMonoRet = $std->gMono_vCBSMonoRet ?? $this->stdIBSCBSTot->gMono->vCBSMonoRet;
         $this->stdTot->vNFTot = $std->vNFTot ?? 0;
 
+        //totalizador final
+        $this->stdTot->vIBS = $gIBS_vIBS;
+        $this->stdTot->vCBS = $gCBS_vCBS;
+
         $ibstot = $this->dom->createElement('IBSCBSTot');
         $this->dom->addChild(
             $ibstot,
@@ -553,7 +558,7 @@ trait TraitTagTotal
             true,
             "$identificador Valor total da BC do IBS e da CBS"
         );
-        if (!empty($std->gIBS_vIBS)) {
+        if (!empty($gIBS_vIBS)) {
             $gIBS = $this->dom->createElement('gIBS');
             $gIBSUF = $this->dom->createElement('gIBSUF');
             $this->dom->addChild(
@@ -624,7 +629,7 @@ trait TraitTagTotal
             );
             $this->dom->appChild($ibstot, $gIBS);
         }
-        if (!empty($std->gCBS_vCBS)) {
+        if (!empty($gCBS_vCBS)) {
             $gCBS = $this->dom->createElement('gCBS');
             $this->dom->addChild(
                 $gCBS,
@@ -663,7 +668,7 @@ trait TraitTagTotal
             );
             $this->dom->appChild($ibstot, $gCBS);
         }
-        if (!empty($std->gMono_vIBSMono) || !empty($std->gMono_vCBSMono)) {
+        if (!empty($gMono_vIBSMono) || !empty($gMono_vCBSMono)) {
             $gMono = $this->dom->createElement('gMono');
             $this->dom->addChild(
                 $gMono,
