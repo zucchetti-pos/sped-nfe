@@ -1546,16 +1546,18 @@ class MakeDev
         }
         if ($this->schema > 9) {
             //Totalizador do IS
-            if (empty($this->ISTot)) {
+            if (empty($this->ISTot) && !empty($this->stdIStot->vIS)) {
                 //não foi informado o total do IS, obter do calculado
                 $tis = [
-                    'vIS' => null
+                    'vIS' => $this->stdIStot->vIS
                 ];
                 $this->tagISTot((object) $tis);
             }
-            $this->addTag($total, $this->ISTot);
+            if (!empty($this->ISTot)) {
+                $this->addTag($total, $this->ISTot);
+            }
             //Totalizador do IBSCBS
-            if (empty($this->IBSCBSTot)) {
+            if (empty($this->IBSCBSTot) && !empty($this->stdIBSCBSTot->vBCIBSCBS)) {
                 //não foi informado o total do IBSCBS, obter do calculado
                 $ib = [
                     'vBCIBSCBS',
