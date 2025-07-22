@@ -365,42 +365,42 @@ trait TraitTagDetIBSCBS
         $this->dom->addChild(
             $gTribRegular,
             "pAliqEfetRegIBSUF",
-            $std->pAliqEfetRegIBSUF,
+            $this->conditionalNumberFormatting($std->pAliqEfetRegIBSUF / 100, 4),
             true,
             "$identificador Alíquota do IBS da UF (pAliqEfetRegIBSUF)"
         );
         $this->dom->addChild(
             $gTribRegular,
             "vTribRegIBSUF",
-            $std->vTribRegIBSUF,
+            $this->conditionalNumberFormatting($std->vTribRegIBSUF),
             true,
             "$identificador Valor do IBS da UF (vTribRegIBSUF)"
         );
         $this->dom->addChild(
             $gTribRegular,
             "pAliqEfetRegIBSMun",
-            $std->pAliqEfetRegIBSMun,
+            $this->conditionalNumberFormatting($std->pAliqEfetRegIBSMun / 100, 4),
             true,
             "$identificador Alíquota do IBS do Município (pAliqEfetRegIBSMun)"
         );
         $this->dom->addChild(
             $gTribRegular,
             "vTribRegIBSMun",
-            $std->vTribRegIBSMun,
+            $this->conditionalNumberFormatting($std->vTribRegIBSMun),
             true,
             "$identificador Valor do IBS do Município (vTribRegIBSMun)"
         );
         $this->dom->addChild(
             $gTribRegular,
             "pAliqEfetRegCBS",
-            $std->pAliqEfetRegCBS,
+            $this->conditionalNumberFormatting($std->pAliqEfetRegCBS / 100, 4),
             true,
             "$identificador Alíquota da CBS (pAliqEfetRegCBS)"
         );
         $this->dom->addChild(
             $gTribRegular,
             "vTribRegCBS",
-            $std->vTribRegCBS,
+            $this->conditionalNumberFormatting($std->vTribRegCBS),
             true,
             "$identificador Valor da CBS (vTribRegCB)"
         );
@@ -523,6 +523,7 @@ trait TraitTagDetIBSCBS
     }
 
     /**
+     * Grupo de Tributação em compras governamentais
      * @param stdClass $std
      * @return DOMElement
      * @throws DOMException
@@ -790,11 +791,12 @@ trait TraitTagDetIBSCBS
     }
 
     /**
+     * Grupo de Transferecnia de Creditos
      * @param stdClass $std
      * @return DOMElement
      * @throws DOMException
      */
-    public function taggTranfCred(stdClass $std): DOMElement
+    public function taggTransfCred(stdClass $std): DOMElement
     {
         $possible = [
             'item',
@@ -823,6 +825,7 @@ trait TraitTagDetIBSCBS
     }
 
     /**
+     * Grupo de Credito Presumido de IBS com a ZF de Manaus
      * @param stdClass $std
      * @return DOMElement
      * @throws DOMException
