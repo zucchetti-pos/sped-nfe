@@ -1801,4 +1801,47 @@ class MakeDev
         }
         return null;
     }
+
+    /**
+     * Grupo ICMSUFDest NA01 pai M01
+     * tag NFe/infNFe/det[]/imposto/ICMSUFDest (opcional)
+     * Grupo a ser informado nas vendas interestaduais para consumidor final,
+     * não contribuinte do ICMS
+     * @param stdClass $std
+     * @return DOMElement
+     * @throws DOMException
+     */
+    public function tagCEST(stdClass $std): DOMElement
+    {
+        $possible = ['item', 'CEST', 'indEscala', 'CNPJFab'];
+        $std = $this->equilizeParameters($std, $possible);
+        $identificador = 'I05b <ctrltST> - ';
+        $ctrltST = $this->dom->createElement("ctrltST");
+        $this->dom->addChild(
+            $ctrltST,
+            "CEST",
+            Strings::onlyNumbers($std->CEST),
+            true,
+            "$identificador [item $std->item] Numero CEST"
+        );
+        //incluido no layout 4.00
+        $this->dom->addChild(
+            $ctrltST,
+            "indEscala",
+            $std->indEscala,
+            false,
+            "$identificador [item $std->item] Indicador de Produção em escala relevante"
+        );
+        //incluido no layout 4.00
+        $this->dom->addChild(
+            $ctrltST,
+            "CNPJFab",
+            Strings::onlyNumbers($std->CNPJFab),
+            false,
+            "$identificador [item $std->item] CNPJ do Fabricante da Mercadoria,"
+                . "obrigatório para produto em escala NÃO relevante."
+        );
+        $this->aCest[$std->item][] = $ctrltST;
+        return $ctrltST;
+    }
 }
