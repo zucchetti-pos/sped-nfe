@@ -122,7 +122,7 @@ trait TraitTagDetIBSCBS
                 true,
                 "$identificador Alíquota do IBS de competência das UF (pIBSUF)"
             );
-            if (!empty($std->gIBSUF_pDif)) {
+            if (!is_null($std->gIBSUF_pDif)) {
                 $gDif = $this->dom->createElement("gDif");
                 $this->dom->addChild(
                     $gDif,
@@ -191,7 +191,7 @@ trait TraitTagDetIBSCBS
                 true,
                 "$identificador Alíquota do IBS de competência do Município (pIBSMun)"
             );
-            if (!empty($std->gIBSMun_pDif)) {
+            if (!is_null($std->gIBSMun_pDif)) {
                 $gDif = $this->dom->createElement("gDif");
                 $this->dom->addChild(
                     $gDif,
