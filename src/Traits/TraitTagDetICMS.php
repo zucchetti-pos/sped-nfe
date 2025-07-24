@@ -79,8 +79,10 @@ trait TraitTagDetICMS
             'vICMSMono',
             'vICMSMonoOp',
             'adRemICMSReten',
+            'qBCMonoReten',
             'vICMSMonoReten',
             'vICMSMonoDif',
+            'qBCMonoRet',
             'vICMSMonoRet',
             'adRemICMSRet',
             'cBenefRBC',
@@ -1815,7 +1817,7 @@ trait TraitTagDetICMS
                     'modBCST',
                     $std->modBCST,
                     true,
-                    "$identificador Alíquota aplicável de cálculo do crédito (Simples Nacional)."
+                    "$identificador Modalidade de determinação da BC do ICMS ST."
                 );
                 $this->dom->addChild(
                     $icmsSN,
