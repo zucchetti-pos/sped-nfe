@@ -494,7 +494,7 @@ class MakeDev
      * Função construtora cria um objeto DOMDocument
      * que será carregado com o documento fiscal
      */
-    public function __construct(string $schema)
+    public function __construct($schema = null)
     {
         $this->schema = 9; //PL_009_V4
         if (!empty($schema)) {
@@ -1588,17 +1588,18 @@ class MakeDev
                 ];
                 $this->tagIBSCBSTot((object) $ib);
             }
-            $this->addTag($total, $this->IBSCBSTot);
-            //campo vNFTot PL_010
-            //vNFTot é a soma de vItem, isso inclue mais valor do que vNF / vIBS / vCBS e vIS
-            // $vNFTot = $this->stdTot->vNF + $this->stdTot->vIBS + $this->stdTot->vCBS + $this->stdTot->vIS;
-            $this->dom->addChild(
-                $total,
-                "vNFTot",
-                $this->conditionalNumberFormatting($this->stdTot->vNF, 2),
-                false,
-                "$identificador Valor total da NF-e com IBS / CBS / IS"
-            );
+            if (!empty($this->IBSCBSTot)) {
+                $this->addTag($total, $this->IBSCBSTot);
+                //campo vNFTot PL_010
+                $vNFTot = $this->stdTot->vNF + $this->stdTot->vIBS + $this->stdTot->vCBS + $this->stdTot->vIS;
+                $this->dom->addChild(
+                    $total,
+                    "vNFTot",
+                    $this->conditionalNumberFormatting($this->stdTot->vNF, 2),
+                    false,
+                    "$identificador Valor total da NF-e com IBS / CBS / IS"
+                );
+            }
         }
         $this->addTag($this->infNFe, $total);
     }
