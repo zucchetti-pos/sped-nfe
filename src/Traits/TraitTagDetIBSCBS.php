@@ -250,6 +250,10 @@ trait TraitTagDetIBSCBS
             );
 
             $gIBSCBS->appendChild($gIBSMun);
+            //Valor do IBS (soma de vIBSUF e vIBSMun).
+            //Quando houver crédito presumido com indicador
+            //“IndDeduzCredPres=1”, o vCredPres deve ser
+            //abatido desse valor.
             $this->dom->addChild(
                 $gIBSCBS,
                 "vIBS",
@@ -525,7 +529,6 @@ trait TraitTagDetIBSCBS
                 true,
                 "$identificador Valor do Crédito Presumido em condição suspensiva. (vCredPres)"
             );
-
         $this->aCBSCredPres[$std->item] = $gCBSCredPres;
         return $gCBSCredPres;
     }
@@ -641,8 +644,6 @@ trait TraitTagDetIBSCBS
 
         $identificador = "UB84 <gIBSCBSMono> -";
         $gIBSCBSMono = $this->dom->createElement("gIBSCBSMono");
-
-
         if (!empty($std->qBCMono)) {
             $padrao  = $this->dom->createElement("gMonoPadrao");
             $this->dom->addChild(

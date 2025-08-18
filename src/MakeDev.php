@@ -126,9 +126,13 @@ class MakeDev
      */
     public $dom;
     /**
+     * @var float
+     */
+    protected $vNFTot;
+    /**
      * @var stdClass
      */
-    protected $stdTot;
+    public $stdTot;
     /**
      * @var stdClass
      */
@@ -961,7 +965,6 @@ class MakeDev
                     if (!empty($this->aCBSCredPres[$item]) && !empty($gIBSCBS)) {
                         $gIBSCBS->appendChild($this->aCBSCredPres[$item]);
                     }
-
                     if (!empty($this->aIBSCredPres[$item]) && !empty($gIBSCBS)) {
                         $gIBSCBS->appendChild($this->aIBSCredPres[$item]);
                     }
@@ -1167,7 +1170,7 @@ class MakeDev
         $vCBS = 0;
         $vTotIBSMonoItem = 0;
         $vTotCBSMonoItem = 0;
-        if (!empty($cbs)) {
+        if (!empty($cbs) && $this->schema > 9) {
             $vIBSUF = (float) !empty($cbs->getElementsByTagName("vIBSUF")->item(0)->nodeValue) ?
                 $cbs->getElementsByTagName("vIBSUF")->item(0)->nodeValue : 0;
             $vIBSMun = (float) !empty($cbs->getElementsByTagName("vIBSMun")->item(0)->nodeValue) ?
@@ -1183,7 +1186,7 @@ class MakeDev
         }
         //IS
         $vIS = 0;
-        if (!empty($is)) {
+        if (!empty($is) && $this->schema > 9) {
             $vIS = (float) !empty($is->getElementsByTagName("vIS")->item(0)->nodeValue) ?
                 $is->getElementsByTagName("vIS")->item(0)->nodeValue : 0;
         }
@@ -1591,7 +1594,9 @@ class MakeDev
             if (!empty($this->IBSCBSTot)) {
                 $this->addTag($total, $this->IBSCBSTot);
                 //campo vNFTot PL_010
-                $vNFTot = $this->stdTot->vNF + $this->stdTot->vIBS + $this->stdTot->vCBS + $this->stdTot->vIS;
+                if (empty($this->vNFTot)) {
+                    $vNFTot = $this->stdTot->vNF + $this->stdTot->vIBS + $this->stdTot->vCBS + $this->stdTot->vIS;
+                }
                 $this->dom->addChild(
                     $total,
                     "vNFTot",
