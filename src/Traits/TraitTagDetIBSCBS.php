@@ -558,44 +558,44 @@ trait TraitTagDetIBSCBS
         $this->dom->addChild(
             $gTrib,
             "pAliqIBSUF",
-            $this->conditionalNumberFormatting($std->pIBSUF, 4),
+            $this->conditionalNumberFormatting($std->pAliqIBSUF, 4),
             true,
-            "$identificador Alíquota do IBS de competência do Estado. (pIBSUF)"
+            "$identificador Alíquota do IBS de competência do Estado. (pAliqIBSUF)"
         );
         $this->dom->addChild(
             $gTrib,
-            "vIBSUF",
-            $this->conditionalNumberFormatting($std->pIBSUF),
+            "vTribIBSUF",
+            $this->conditionalNumberFormatting($std->vTribIBSUF),
             true,
-            "$identificador Valor do Tributo do IBS da UF calculado. (vIBSUF)"
+            "$identificador Valor do Tributo do IBS da UF calculado. (vTribIBSUF)"
         );
         $this->dom->addChild(
             $gTrib,
-            "pIBSMun",
-            $this->conditionalNumberFormatting($std->pIBSMun, 4),
+            "pAliqIBSMun",
+            $this->conditionalNumberFormatting($std->pAliqIBSMun, 4),
             true,
-            "$identificador Alíquota do IBS de competência do Município. (pIBSMun)"
+            "$identificador Alíquota do IBS de competência do Município. (pAliqIBSMun)"
         );
         $this->dom->addChild(
             $gTrib,
-            "vIBSMun",
-            $this->conditionalNumberFormatting($std->vIBSMun),
+            "vTribIBSMun",
+            $this->conditionalNumberFormatting($std->vTribIBSMun),
             true,
-            "$identificador Valor do Tributo do IBS do Município calculado. (vIBSMun)"
+            "$identificador Valor do Tributo do IBS do Município calculado. (vTribIBSMun)"
         );
         $this->dom->addChild(
             $gTrib,
-            "pCBS",
-            $this->conditionalNumberFormatting($std->pCBS, 4),
+            "pAliqCBS",
+            $this->conditionalNumberFormatting($std->pAliqCBS, 4),
             true,
-            "$identificador Alíquota da CBS. (pCBS)"
+            "$identificador Alíquota da CBS. (pAliqCBS)"
         );
         $this->dom->addChild(
             $gTrib,
-            "vCBS",
-            $this->conditionalNumberFormatting($std->vCBS),
+            "vTribCBS",
+            $this->conditionalNumberFormatting($std->vTribCBS),
             true,
-            "$identificador Valor do Tributo da CBS calculado. (vCBS)"
+            "$identificador Valor do Tributo da CBS calculado. (vTribCBS)"
         );
         $this->aGTribCompraGov[$std->item] = $gTrib;
         return $gTrib;
@@ -637,12 +637,12 @@ trait TraitTagDetIBSCBS
         ];
         $std = $this->equilizeParameters($std, $possible);
         //Totalizador
-        $this->stdIBSCBSTot->gIBSCBSMono->vIBSMono += $std->vIBSMono ?? 0;
-        $this->stdIBSCBSTot->gIBSCBSMono->vCBSMono += $std->vCBSMono ?? 0;
-        $this->stdIBSCBSTot->gIBSCBSMono->vIBSMonoReten += $std->vIBSMonoReten ?? 0;
-        $this->stdIBSCBSTot->gIBSCBSMono->vCBSMonoReten += $std->vCBSMonoReten ?? 0;
-        $this->stdIBSCBSTot->gIBSCBSMono->vIBSMonoRet += $std->vIBSMonoRet ?? 0;
-        $this->stdIBSCBSTot->gIBSCBSMono->vCBSMonoRet += $std->vCBSMonoRet ?? 0;
+        $this->stdIBSCBSTot->gMono->vIBSMono += $std->vIBSMono ?? 0;
+        $this->stdIBSCBSTot->gMono->vCBSMono += $std->vCBSMono ?? 0;
+        $this->stdIBSCBSTot->gMono->vIBSMonoReten += $std->vIBSMonoReten ?? 0;
+        $this->stdIBSCBSTot->gMono->vCBSMonoReten += $std->vCBSMonoReten ?? 0;
+        $this->stdIBSCBSTot->gMono->vIBSMonoRet += $std->vIBSMonoRet ?? 0;
+        $this->stdIBSCBSTot->gMono->vCBSMonoRet += $std->vCBSMonoRet ?? 0;
 
         $identificador = "UB84 <gIBSCBSMono> -";
         $gIBSCBSMono = $this->dom->createElement("gIBSCBSMono");
