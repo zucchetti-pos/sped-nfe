@@ -67,7 +67,8 @@ trait TraitTagDetIBSCBS
             'gCBS_vDevTrib', //opcional Valor do tributo devolvido 13v2
             'gCBS_pRedAliq', //opcional Percentual da redução de alíquota 3v2-4
             'gCBS_pAliqEfet', //opcional Alíquota Efetiva da CBS que será aplicada a Base de Cálculo 3v2-4
-            'gCBS_vCBS', //opcional Valor da CBS 13v2
+            'gCBS_vCBS', //opcional Valor da CBS 13v2,
+            'gIBS_vIBS',
         ];
         $std = $this->equilizeParameters($std, $possible);
         $identificador = "UB12 <IBSCBS> -";
@@ -255,14 +256,14 @@ trait TraitTagDetIBSCBS
             //“IndDeduzCredPres=1”, o vCredPres deve ser
             //abatido desse valor.
             //@todo recolocar em setembro é obrigatório em v1.02
-            /*
+
             $this->dom->addChild(
                 $gIBSCBS,
                 "vIBS",
-                $this->conditionalNumberFormatting($this->stdIBSCBSTot->vIBS),
+                $this->conditionalNumberFormatting($std->gIBS_vIBS),
                 true,
                 "$identificador Valor do Total do IBS"
-            );*/
+            );
             //gripo de Informações da CBS
             $identificador = "UB12 <IBSCBS/gIBSCBS/gCBS> -";
             $gCBS = $this->dom->createElement("gCBS");
