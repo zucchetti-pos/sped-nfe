@@ -104,7 +104,7 @@ trait TraitTagDetIBSCBS
             "$identificador Código de Classificação Tributária do IBS e CBS (cClassTrib)"
         );
         //gIBSCBS é opcional e também é um choice com IBSCBSMono
-        if (!empty($std->vBC)) {
+        if (!is_null($std->vBC)) {
             $identificador = "UB12 <IBSCBS/gIBSCBS> -";
             $gIBSCBS = $this->dom->createElement("gIBSCBS");
             $this->dom->addChild(
@@ -141,7 +141,7 @@ trait TraitTagDetIBSCBS
                 );
                 $gIBSUF->appendChild($gDif);
             }
-            if (!empty($std->gIBSUF_vDevTrib)) {
+            if (!is_null($std->gIBSUF_vDevTrib)) {
                 //Grupo de Informações da devolução de tributos IBSUF
                 $gDevTrib = $this->dom->createElement("gDevTrib");
                 $this->dom->addChild(
@@ -153,7 +153,7 @@ trait TraitTagDetIBSCBS
                 );
                 $gIBSUF->appendChild($gDevTrib);
             }
-            if (!empty($std->gIBSUF_pRedAliq)) {
+            if (!is_null($std->gIBSUF_pRedAliq)) {
                 //Grupo de informações da redução da alíquota
                 $gRed = $this->dom->createElement("gRed");
                 $this->dom->addChild(
@@ -210,7 +210,7 @@ trait TraitTagDetIBSCBS
                 );
                 $gIBSMun->appendChild($gDif);
             }
-            if (!empty($std->gIBSMun_vDevTrib)) {
+            if (!is_null($std->gIBSMun_vDevTrib)) {
                 //Grupo de Informações da devolução de tributos
                 $gDevTrib = $this->dom->createElement("gDevTrib");
                 $this->dom->addChild(
@@ -222,7 +222,7 @@ trait TraitTagDetIBSCBS
                 );
                 $gIBSMun->appendChild($gDevTrib);
             }
-            if (!empty($std->gIBSMun_pRedAliq)) {
+            if (!is_null($std->gIBSMun_pRedAliq)) {
                 //Grupo de informações da redução da alíquota IBSMun
                 $gRed = $this->dom->createElement("gRed");
                 $this->dom->addChild(
@@ -272,7 +272,7 @@ trait TraitTagDetIBSCBS
                 true,
                 "$identificador Alíquota da CBS (pCBS)"
             );
-            if (!empty($std->gCBS_pDif)) {
+            if (!is_null($std->gCBS_pDif)) {
                 $gDif = $this->dom->createElement("gDif");
                 $this->dom->addChild(
                     $gDif,
@@ -290,7 +290,7 @@ trait TraitTagDetIBSCBS
                 );
                 $gCBS->appendChild($gDif);
             }
-            if (!empty($std->gCBS_vDevTrib)) {
+            if (!is_null($std->gCBS_vDevTrib)) {
                 //Grupo de Informações da devolução de tributos
                 $gDevTrib = $this->dom->createElement("gDevTrib");
                 $this->dom->addChild(
@@ -302,7 +302,7 @@ trait TraitTagDetIBSCBS
                 );
                 $gCBS->appendChild($gDevTrib);
             }
-            if (!empty($std->gCBS_pRedAliq)) {
+            if (!is_null($std->gCBS_pRedAliq)) {
                 //Grupo de informações da redução da alíquota CBS
                 $gRed = $this->dom->createElement("gRed");
                 $this->dom->addChild(
