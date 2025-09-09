@@ -255,8 +255,6 @@ trait TraitTagDetIBSCBS
             //Quando houver crédito presumido com indicador
             //“IndDeduzCredPres=1”, o vCredPres deve ser
             //abatido desse valor.
-            //@todo recolocar em setembro é obrigatório em v1.02
-
             $this->dom->addChild(
                 $gIBSCBS,
                 "vIBS",
