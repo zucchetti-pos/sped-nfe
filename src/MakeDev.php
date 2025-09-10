@@ -1602,19 +1602,11 @@ class MakeDev
                 //$this->vNFTot = $this->stdTot->vNF;
                 //@todo 2026 + $this->stdTot->vIBS + $this->stdTot->vCBS + $this->stdTot->vIS;
                 //}
-                if (!empty($this->vNFTot)) {
-                    $this->dom->addChild(
-                        $total,
-                        "vNFTot",
-                        $this->conditionalNumberFormatting($this->vNFTot, 2),
-                        false,
-                        "$identificador Valor total da NF-e com IBS / CBS / IS"
-                    );
-                }
+                $vNFTot = !is_null($this->vNFTot) ? $this->vNFTot : $this->stdTot->vNF;
                 $this->dom->addChild(
                     $total,
                     "vNFTot",
-                    $this->conditionalNumberFormatting($this->stdTot->vNF, 2),
+                    $this->conditionalNumberFormatting($vNFTot, 2),
                     false,
                     "$identificador Valor total da NF-e com IBS / CBS / IS"
                 );
