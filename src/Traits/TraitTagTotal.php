@@ -548,8 +548,8 @@ trait TraitTagTotal
 
         $vBCIBSCBS = $std->vBCIBSCBS ?? $this->stdIBSCBSTot->vBCIBSCBS;
         $gIBS_vIBS = $std->gIBS_vIBS ?? $this->stdIBSCBSTot->vIBS;
-        $gIBS_vCredPres = $std->gIBS_vCredPres ?? $this->stdIBSCBSTot->vCredPres;
-        $gIBS_vCredPresCondSus = $std->gIBS_vCredPresCondSus ?? $this->stdIBSCBSTot->vCredPresCondSus;
+        $gIBS_vCredPres = $std->gIBS_vCredPres ?? 0;
+        $gIBS_vCredPresCondSus = $std->gIBS_vCredPresCondSus ?? 0;
         $gIBSUF_vDif = $std->gIBSUF_vDif ?? $this->stdIBSCBSTot->gIBSUF->vDif;
         $gIBSUF_vDevTrib = $std->gIBSUF_vDevTrib ?? $this->stdIBSCBSTot->gIBSUF->vDevTrib;
         $gIBSUF_vIBSUF = $std->gIBSUF_vIBSUF ?? $this->stdIBSCBSTot->gIBSUF->vIBSUF;
@@ -559,8 +559,8 @@ trait TraitTagTotal
         $gCBS_vDif = $std->gCBS_vDif ?? $this->stdIBSCBSTot->gCBS->vDif;
         $gCBS_vDevTrib = $std->gCBS_vDevTrib ?? $this->stdIBSCBSTot->gCBS->vDevTrib;
         $gCBS_vCBS = $std->gCBS_vCBS ?? $this->stdIBSCBSTot->vCBS;
-        $gCBS_vCredPres = $std->gCBS_vCredPres ?? $this->stdIBSCBSTot->vCredPres;
-        $gCBS_vCredPresCondSus = $std->gCBS_vCredPresCondSus ?? $this->stdIBSCBSTot->vCredPresCondSus;
+        $gCBS_vCredPres = $std->gCBS_vCredPres ?? 0;
+        $gCBS_vCredPresCondSus = $std->gCBS_vCredPresCondSus ?? 0;
         $gMono_vIBSMono = $std->gMono_vIBSMono ?? $this->stdIBSCBSTot->gMono->vIBSMono;
         $gMono_vCBSMono = $std->gMono_vCBSMono ?? $this->stdIBSCBSTot->gMono->vCBSMono;
         $gMono_vIBSMonoReten = $std->gMono_vIBSMonoReten ?? $this->stdIBSCBSTot->gMono->vIBSMonoReten;
