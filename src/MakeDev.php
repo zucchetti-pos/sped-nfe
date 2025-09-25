@@ -90,6 +90,10 @@ class MakeDev
      */
     protected $tpAmb = 2;
     /**
+     * @var int
+     */
+    protected $crt;
+    /**
      * @var array
      */
     public $errors = [];
@@ -106,13 +110,21 @@ class MakeDev
      */
     protected string $version;
     /**
-     * @var int
+     * @var string
      */
-    protected int $mod = 55;
+    protected string $mod = '55';
     /**
      * @var string
      */
     protected string $csrt;
+    /**
+     * @var string
+     */
+    protected $cst_ibscbs;
+    /**
+     * @var int
+     */
+    protected $indDeduzDeson = 0;
     /**
      * @var bool
      */
@@ -960,7 +972,6 @@ class MakeDev
                     $ibscbs = $this->aIBSCBS[$item];
                     //existe o grupo gIBSCBS no node IBSCBS ?
                     $gIBSCBS = $ibscbs->getElementsByTagName("gIBSCBS")->item(0);
-
                     if (!empty($this->aGTribRegular[$item]) && !empty($gIBSCBS)) {
                         //add gTribRegular
                         $gIBSCBS->appendChild($this->aGTribRegular[$item]);
@@ -969,11 +980,14 @@ class MakeDev
                         $gIBSCBS->appendChild($this->aIBSCredPres[$item]);
                     }
                     if (!empty($this->aCBSCredPres[$item]) && !empty($gIBSCBS)) {
-                        $ibscbs->appendChild($this->aCBSCredPres[$item]);
+                        $gIBSCBS->appendChild($this->aCBSCredPres[$item]);
+                    }
+                    if (!empty($this->aGTribCompraGov[$item]) && !empty($gIBSCBS)) {
+                        $gIBSCBS->appendChild($this->aGTribCompraGov[$item]);
                     }
                     //CHICE gIBSCBS, gIBSCBSMono, gTranfCred
                     //existe o grupo gIBSCBS no node IBSCBS ?
-                    $gIBSCBS = $ibscbs->getElementsByTagName("gIBSCBS")->item(0);
+                    ///$gIBSCBS = $ibscbs->getElementsByTagName("gIBSCBS")->item(0);
                     if (!empty($gIBSCBS)) {
                         //add gIBSCBS ao node imposto
                         $this->addTag($ibscbs, $gIBSCBS, 'Falta a tag IBSCBS!');
@@ -981,7 +995,7 @@ class MakeDev
                         //não existe gIBSCBS, então add gIBSCBSMono
                         $this->addTag($ibscbs, $this->aGIBSCBSMono[$item], 'Falta a tag IBSCBS!');
                     } elseif (!empty($this->aGTransfCred[$item])) {
-                        //gTranfCred
+                        //não existe gIBSCBS, nem gIBSCBSMono então add gTransfCred
                         $this->addTag($ibscbs, $this->aGTransfCred[$item], 'Falta a tag IBSCBS!');
                     }
                     //gCredPresIBSZFM
@@ -1056,7 +1070,7 @@ class MakeDev
 
         $this->stdTot->vNF = $this->stdTot->vProd
             - $this->stdTot->vDesc
-            - $this->stdTot->vICMSDeson
+            - $this->stdTot->vICMSDeson * $this->indDeduzDeson
             + $this->stdTot->vST
             + $this->stdTot->vFCPST
             + $this->stdTot->vICMSMonoReten
@@ -1568,7 +1582,7 @@ class MakeDev
                 $this->addTag($total, $this->ISTot);
             }
             //Totalizador do IBSCBS
-            if (empty($this->IBSCBSTot) && !empty($this->stdIBSCBSTot->vBCIBSCBS)) {
+            if (empty($this->IBSCBSTot) && !empty($this->cst_ibscbs)) {
                 //não foi informado o total do IBSCBS, obter do calculado
                 $ib = [
                     'vBCIBSCBS',
