@@ -2112,23 +2112,53 @@ class Make
         ];
         $std = $this->equilizeParameters($std, $possible);
         $identificador = 'VA01 <obsItem> - ';
-        $obsItem = $this->dom->createElement("obsItem");
+        if (isset($this->obsItem[$std->item])) {
+            $obsItem = $this->obsItem[$std->item];
+        } else {
+            $obsItem = $this->dom->createElement("obsItem");
+        }
         $obsCont = $this->dom->createElement("obsCont");
-        $this->dom->addChild(
-            $obsCont,
-            "xCampo",
-            substr(trim($std->xCampo ?? ''), 0, 20),
-            true,
-            $identificador . "[item $std->item] (obsCont/xCampo) Identificação do campo"
-        );
+        $obsCont->setAttribute("xCampo", $std->xCampo);
         $this->dom->addChild(
             $obsCont,
             "xTexto",
-            substr(trim($std->xTexto ?? ''), 0, 60),
+            $std->xTexto,
             true,
             $identificador . "[item $std->item] (obsCont/xTexto) Conteúdo do campo"
         );
         $obsItem->appendChild($obsCont);
+        $this->obsItem[$std->item] = $obsItem;
+        return $obsItem;
+    }
+
+    /**
+     * Grupo de observações de uso livre (para o item da NF-e)
+     * Grupo de observações de uso livre do Fisco
+     */
+    public function tagprodObsFisco(stdClass $std): ?DOMElement
+    {
+        $possible = [
+            'item',
+            'xCampo',
+            'xTexto'
+        ];
+        $std = $this->equilizeParameters($std, $possible);
+        $identificador = 'VA01 <obsItem> - ';
+        if (isset($this->obsItem[$std->item])) {
+            $obsItem = $this->obsItem[$std->item];
+        } else {
+            $obsItem = $this->dom->createElement("obsItem");
+        }
+        $obsFisco = $this->dom->createElement("obsFisco");
+        $obsFisco->setAttribute("xCampo", $std->xCampo);
+        $this->dom->addChild(
+            $obsFisco,
+            "xTexto",
+            $std->xTexto,
+            true,
+            $identificador . "[item $std->item] (obsFisco/xTexto) Conteúdo do campo"
+        );
+        $obsItem->appendChild($obsFisco);
         $this->obsItem[$std->item] = $obsItem;
         return $obsItem;
     }
@@ -7799,10 +7829,8 @@ class Make
             "CPF do Responsável Técnico, emitente do receituário"
         );
         $this->aDefencivo[] = $def;
-        $agro = $this->dom->createElement("agropecuario");
-        $agro->appendChild($def);
         $this->flagAgro = true;
-        return $agro;
+        return $def;
     }
 
     /**
@@ -7851,10 +7879,8 @@ class Make
             "Número da Guia"
         );
         $this->agropecuarioGuia = $guia;
-        $agro = $this->dom->createElement("agropecuario");
-        $agro->appendChild($guia);
         $this->flagAgro = true;
-        return $agro;
+        return $guia;
     }
 
     /**
