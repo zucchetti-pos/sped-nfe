@@ -78,6 +78,7 @@ class MakeDev
     use TraitTagCana;
     use TraitTagAgropecuario;
     use TraitTagTotal;
+
     public const IBS_CRED_PRES_SUS_BLOCKED_UNTIL = '01-01-2033';
     public const CBS_CRED_PRES_SUS_BLOCKED_UNTIL = '01-01-2027';
 
@@ -1267,8 +1268,9 @@ class MakeDev
             ];
             $this->tagISSQNTot((object)$iss);
         }
+
         $this->addTag($total, $this->ISSQNTot ?? null);
-        ;
+
         //Grupo Retenções de Tributos
         if (!empty($this->retTrib)) {
             $this->addTag($total, $this->retTrib);

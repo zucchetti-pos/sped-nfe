@@ -354,7 +354,9 @@ trait TraitTagTotal
      */
     public function tagISSQNTot(?stdClass $std = null)
     {
-        if (empty($this->aItensServ)) return;
+        if (empty($this->aItensServ)) {
+            return;
+        }
 
         $this->buildISSQNTot();
         $possible = [
