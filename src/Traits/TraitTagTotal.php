@@ -17,11 +17,14 @@ use DOMException;
  * @property stdclass $stdTot Totalizador
  * @property stdclass $stdISSQNTot Totalizador
  * @property stdclass $stdIBSCBSTot Totalizador
+ * @property array $aItensServ
  * @method equilizeParameters($std, $possible)
  * @method conditionalNumberFormatting($value, $decimal = 2)
  */
 trait TraitTagTotal
 {
+    protected bool $flagISSQNCalc = false;
+
     /**
      * Valor vNTTot
      * tag NFe/infNFe/total/vNFTot
@@ -349,13 +352,13 @@ trait TraitTagTotal
      * Grupo Totais referentes ao ISSQN W17 pai W01
      * tag NFe/infNFe/total/ISSQNTot (opcional)
      * @param stdClass|null $std
-     * @return DOMElement|false
+     * @return DOMElement|null
      * @throws DOMException
      */
     public function tagISSQNTot(?stdClass $std = null)
     {
         if (empty($this->aItensServ)) {
-            return;
+            return null;
         }
 
         $this->buildISSQNTot();

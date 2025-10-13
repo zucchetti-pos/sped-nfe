@@ -11,11 +11,14 @@ use DOMException;
  * @property  Dom $dom
  * @property stdClass $stdTot
  * @property array $aISSQN
+ * @property stdClass $stdISSQNTot
  * @method equilizeParameters($std, $possible)
  * @method conditionalNumberFormatting($value, $decimal = 2)
  */
 trait TraitTagDetISSQN
 {
+    protected array $aItensServ = [];
+
     /**
      * Grupo ISSQN U01 pai M01
      * tag NFe/infNFe/det[]/imposto/ISSQN (opcional)

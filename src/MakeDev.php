@@ -1545,7 +1545,7 @@ class MakeDev
      * não contribuinte do ICMS
      * @param stdClass $std
      * @return DOMElement
-     * @throws DOMException
+     * @throws \DOMException
      */
     public function tagCEST(stdClass $std): DOMElement
     {
