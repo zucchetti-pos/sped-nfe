@@ -488,17 +488,25 @@ trait TraitTagTotal
     }
 
     /**
+     * Grupo total do imposto seletivo
+     * total/ISTot
+     * 2025.002_v1.30 - PL_010_V1.30
+     * @param stdClass|null $std
+     * @return DOMElement|false
      * @param stdClass $std
-     * @return DOMElement
+     * @return ?DOMElement
      * @throws DOMException
      */
-    public function tagISTot(stdClass $std): DOMElement
+    public function tagISTot(stdClass $std): ?DOMElement
     {
         $possible = ['vIS'];
         $std = $this->equilizeParameters($std, $possible);
-        $identificador = "<ISTot> -";
+        $identificador = "W31 ISTot -";
         $vIS = $std->vIS ?? ($this->stdIStot->vIS ?? 0);
         $this->stdTot->vIS = $vIS;
+        if (empty($vIS)) {
+            return null;
+        }
         $istot = $this->dom->createElement('ISTot');
         $this->dom->addChild(
             $istot,
@@ -512,7 +520,9 @@ trait TraitTagTotal
     }
 
     /**
-     *
+     * Totais da NF-e com IBS e CBS
+     * infNFe/total/IBSCBSTot
+     * NT 2025.002_v1.30 - PL_010_V1.30
      * @param stdClass $std
      * @return DOMElement
      * @throws DOMException
@@ -541,10 +551,12 @@ trait TraitTagTotal
             'gMono_vCBSMonoReten',
             'gMono_vIBSMonoRet',
             'gMono_vCBSMonoRet',
-            'vNFTot'
+            'vNFTot',
+            'gEstonoCred_vIBSEstCred',
+            'gEstonoCred_vCBSEstCred',
         ];
         $std = $this->equilizeParameters($std, $possible);
-        $identificador = "<IBSCBSTot> -";
+        $identificador = "W34 IBSCBSTot -";
 
         $vBCIBSCBS = $std->vBCIBSCBS ?? $this->stdIBSCBSTot->vBCIBSCBS;
         $gIBS_vIBS = $std->gIBS_vIBS ?? $this->stdIBSCBSTot->vIBS;
@@ -568,6 +580,8 @@ trait TraitTagTotal
         $gMono_vIBSMonoRet = $std->gMono_vIBSMonoRet ?? $this->stdIBSCBSTot->gMono->vIBSMonoRet;
         $gMono_vCBSMonoRet = $std->gMono_vCBSMonoRet ?? $this->stdIBSCBSTot->gMono->vCBSMonoRet;
         $this->stdTot->vNFTot = $std->vNFTot ?? 0;
+        $gEstornoCred_vIBSEstCred = $std->gEstonoCred_vIBSEstCred ?? $this->stdIBSCBSTot->gEstornoCred->vIBSEstCred;
+        $gEstornoCred_vCBSEstCred = $std->gEstonoCred_vCBSEstCred ?? $this->stdIBSCBSTot->gEstornoCred->vCBSEstCred;
 
         //totalizador final
         $this->stdTot->vIBS = $gIBS_vIBS;
@@ -605,7 +619,7 @@ trait TraitTagTotal
                 true,
                 "$identificador Valor total do IBS da UF (gIBSUF/vIBSUF)"
             );
-            $this->dom->appChild($gIBS, $gIBSUF);
+            $gIBS->appendChild($gIBSUF);
             $gIBSMun = $this->dom->createElement('gIBSMun');
             $this->dom->addChild(
                 $gIBSMun,
@@ -628,7 +642,7 @@ trait TraitTagTotal
                 true,
                 "$identificador Valor total do IBS do Município (gIBSMun/vIBSMun)"
             );
-            $this->dom->appChild($gIBS, $gIBSMun);
+            $gIBS->appendChild($gIBSMun);
             $this->dom->addChild(
                 $gIBS,
                 "vIBS",
@@ -650,7 +664,7 @@ trait TraitTagTotal
                 true,
                 "$identificador Valor total do crédito presumido em condição suspensiva."
             );
-            $this->dom->appChild($ibstot, $gIBS);
+            $ibstot->appendChild($gIBS);
         }
         if (!empty($gCBS_vCBS)) {
             $gCBS = $this->dom->createElement('gCBS');
@@ -689,7 +703,7 @@ trait TraitTagTotal
                 true,
                 "$identificador Valor total do crédito presumido em condição suspensiva. (gCBS/vCrePresCondSus)"
             );
-            $this->dom->appChild($ibstot, $gCBS);
+            $ibstot->appendChild($gCBS);
         }
         if (!empty($gMono_vIBSMono) || !empty($gMono_vCBSMono)) {
             $gMono = $this->dom->createElement('gMono');
@@ -735,7 +749,26 @@ trait TraitTagTotal
                 true,
                 "$identificador Total da CBS monofásica retida anteriormente"
             );
-            $this->dom->appChild($ibstot, $gMono);
+            $ibstot->appendChild($gMono);
+        }
+        //NT 2025.002_v1.30 - PL_010_V1.30
+        if (!empty($gEstornoCred_vIBSEstCred) || !empty($gEstornoCred_vCBSEstCred)) {
+            $gEst = $this->dom->createElement('gEstornoCred');
+            $this->dom->addChild(
+                $gEst,
+                "vIBSEstCred",
+                $this->conditionalNumberFormatting($gEstornoCred_vIBSEstCred),
+                true,
+                "$identificador Valor total do IBS estornado (vIBSEstCred)"
+            );
+            $this->dom->addChild(
+                $gEst,
+                "vCBSEstCred",
+                $this->conditionalNumberFormatting($gEstornoCred_vCBSEstCred),
+                true,
+                "$identificador Valor total do CBS estornado (vCBSEstCred)"
+            );
+            $ibstot->appendChild($gEst);
         }
         $this->IBSCBSTot = $ibstot;
         return $ibstot;
@@ -760,7 +793,7 @@ trait TraitTagTotal
             'vRetPrev'
         ];
         $std = $this->equilizeParameters($std, $possible);
-        $identificador = "W23 <retTrib> -";
+        $identificador = "W23 retTrib -";
         $retTrib = $this->dom->createElement("retTrib");
         $this->dom->addChild(
             $retTrib,
