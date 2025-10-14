@@ -1580,4 +1580,13 @@ class MakeDev
         $this->aCest[$std->item][] = $ctrltST;
         return $ctrltST;
     }
+
+    private function getNodeValue(DOMElement $node, string $name)
+    {
+        $dom = new Dom('1.0', 'utf-8');
+        $dom->loadXML("<root></root>");
+        $newnode = $dom->importNode($node, true);
+        $dom->documentElement->appendChild($newnode);
+        return $dom->getNodeValue($name);
+    }
 }
