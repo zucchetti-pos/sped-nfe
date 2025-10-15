@@ -495,7 +495,7 @@ trait TraitTagDetIBSCBS
             true,
             "$identificador Valor do Crédito Presumido (vCredPres)"
         );
-        if ($this->isIBSCredPresSusBlocked()) {
+        if ($this->isIBSCredPresSusBlocked())
             $this->dom->addChild(
                 $gIBSCredPres,
                 "vCredPresCondSus",
@@ -503,7 +503,6 @@ trait TraitTagDetIBSCBS
                 true,
                 "$identificador Valor do Crédito Presumido em condição suspensiva. (vCredPres)"
             );
-        }
         $this->aIBSCredPres[$std->item] = $gIBSCredPres;
         return $gIBSCredPres;
     }
@@ -553,7 +552,8 @@ trait TraitTagDetIBSCBS
             true,
             "$identificador Valor do Crédito Presumido (vCredPres)"
         );
-        if ($this->isCBSCredPresSusBlocked()) {
+
+        if ($this->isCBSCredPresSusBlocked())
             $this->dom->addChild(
                 $gCBSCredPres,
                 "vCredPresCondSus",
@@ -561,7 +561,6 @@ trait TraitTagDetIBSCBS
                 true,
                 "$identificador Valor do Crédito Presumido em condição suspensiva. (vCredPres)"
             );
-        }
         $this->aCBSCredPres[$std->item] = $gCBSCredPres;
         return $gCBSCredPres;
     }
