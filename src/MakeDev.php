@@ -279,8 +279,6 @@ class MakeDev
         $this->stdTot->vCBS = 0;
         $this->stdTot->vIS = 0;
 
-        $this->vNFTot = 0;
-
         $this->stdTot->vNFTot = 0;
         $this->stdTot->vNFTotCalculated = 0;
         //ISSQN
