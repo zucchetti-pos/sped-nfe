@@ -1081,7 +1081,7 @@ trait TraitTagDetIBSCBS
                 true,
                 "$identificador Percentual do Crédito Presumido (ibs_pCredPres)"
             );
-            if (!empty($std->ibs_vCredPres)) {
+            if (isset($std->ibs_vCredPres)) {
                 $this->dom->addChild(
                     $gibs,
                     "vCredPres",
@@ -1109,7 +1109,7 @@ trait TraitTagDetIBSCBS
                 true,
                 "$identificador Percentual do Crédito Presumido (cbs_pCredPres)"
             );
-            if (!empty($std->cbs_vCredPres)) {
+            if (isset($std->cbs_vCredPres)) {
                 $this->dom->addChild(
                     $gcbs,
                     "vCredPres",
