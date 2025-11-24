@@ -41,7 +41,7 @@ use NFePHP\NFe\Traits\TraitTagTransp;
 use stdClass;
 use DOMElement;
 
-final class Make
+class Make
 {
     use TraitTagInfNfe;
     use TraitTagIde;
