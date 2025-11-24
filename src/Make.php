@@ -106,7 +106,7 @@ class Make
     protected stdClass $stdIBSCBSTot;
     protected DOMElement $NFe;
     protected DOMElement $infNFe;
-    protected DOMElement $ide;
+    protected ?DOMElement $ide;
     protected ?DOMElement $gCompraGov;
     protected ?DOMElement $gPagAntecipado;
     protected DOMElement $emit;
