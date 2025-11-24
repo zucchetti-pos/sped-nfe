@@ -18,6 +18,7 @@ use DOMException;
  * @property stdclass $stdISSQNTot Totalizador
  * @property stdclass $stdIBSCBSTot Totalizador
  * @property array $aItensServ
+ * @property bool $flagMono
  * @method equilizeParameters($std, $possible)
  * @method conditionalNumberFormatting($value, $decimal = 2)
  */
@@ -561,8 +562,8 @@ trait TraitTagTotal
 
         $vBCIBSCBS = $std->vBCIBSCBS ?? $this->stdIBSCBSTot->vBCIBSCBS;
         $gIBS_vIBS = $std->gIBS_vIBS ?? $this->stdIBSCBSTot->vIBS;
-        $gIBS_vCredPres = $std->gIBS_vCredPres ?? 0;
-        $gIBS_vCredPresCondSus = $std->gIBS_vCredPresCondSus ?? 0;
+        $gIBS_vCredPres = $std->gIBS_vCredPres ?? $this->stdIBSCBSTot->gIBS->vCredPres;
+        $gIBS_vCredPresCondSus = $std->gIBS_vCredPresCondSus ?? $this->stdIBSCBSTot->gIBS->vCredPresCondSus;
         $gIBSUF_vDif = $std->gIBSUF_vDif ?? $this->stdIBSCBSTot->gIBSUF->vDif;
         $gIBSUF_vDevTrib = $std->gIBSUF_vDevTrib ?? $this->stdIBSCBSTot->gIBSUF->vDevTrib;
         $gIBSUF_vIBSUF = $std->gIBSUF_vIBSUF ?? $this->stdIBSCBSTot->gIBSUF->vIBSUF;
@@ -572,8 +573,8 @@ trait TraitTagTotal
         $gCBS_vDif = $std->gCBS_vDif ?? $this->stdIBSCBSTot->gCBS->vDif;
         $gCBS_vDevTrib = $std->gCBS_vDevTrib ?? $this->stdIBSCBSTot->gCBS->vDevTrib;
         $gCBS_vCBS = $std->gCBS_vCBS ?? $this->stdIBSCBSTot->vCBS;
-        $gCBS_vCredPres = $std->gCBS_vCredPres ?? 0;
-        $gCBS_vCredPresCondSus = $std->gCBS_vCredPresCondSus ?? 0;
+        $gCBS_vCredPres = $std->gCBS_vCredPres ?? $this->stdIBSCBSTot->gCBS->vCredPres;
+        $gCBS_vCredPresCondSus = $std->gCBS_vCredPresCondSus ?? $this->stdIBSCBSTot->gCBS->vCredPresCondSus;
         $gMono_vIBSMono = $std->gMono_vIBSMono ?? $this->stdIBSCBSTot->gMono->vIBSMono;
         $gMono_vCBSMono = $std->gMono_vCBSMono ?? $this->stdIBSCBSTot->gMono->vCBSMono;
         $gMono_vIBSMonoReten = $std->gMono_vIBSMonoReten ?? $this->stdIBSCBSTot->gMono->vIBSMonoReten;
@@ -594,9 +595,9 @@ trait TraitTagTotal
             "vBCIBSCBS",
             $this->conditionalNumberFormatting($vBCIBSCBS),
             true,
-            "$identificador Valor total da BC do IBS e da CBS"
+            "$identificador Valor total da BC do IBS e da CBS (vBCIBSCBS)"
         );
-        if (!empty($gIBS_vIBS)) {
+        if (isset($gIBS_vIBS)) {
             $gIBS = $this->dom->createElement('gIBS');
             $gIBSUF = $this->dom->createElement('gIBSUF');
             $this->dom->addChild(
@@ -649,25 +650,25 @@ trait TraitTagTotal
                 "vIBS",
                 $this->conditionalNumberFormatting($gIBS_vIBS),
                 true,
-                "$identificador Valor total do IBS"
+                "$identificador Valor total do IBS (vIBS)"
             );
             $this->dom->addChild(
                 $gIBS,
                 "vCredPres",
                 $this->conditionalNumberFormatting($gIBS_vCredPres),
                 true,
-                "$identificador Valor total do crédito presumido"
+                "$identificador Valor total do crédito presumido (gIBS/vCredPres)"
             );
             $this->dom->addChild(
                 $gIBS,
                 "vCredPresCondSus",
                 $this->conditionalNumberFormatting($gIBS_vCredPresCondSus),
                 true,
-                "$identificador Valor total do crédito presumido em condição suspensiva."
+                "$identificador Valor total do crédito presumido em condição suspensiva. (gIBS/vCredPresCondSus)"
             );
             $ibstot->appendChild($gIBS);
         }
-        if (!empty($gCBS_vCBS)) {
+        if (isset($gCBS_vCBS)) {
             $gCBS = $this->dom->createElement('gCBS');
             $this->dom->addChild(
                 $gCBS,
@@ -706,7 +707,7 @@ trait TraitTagTotal
             );
             $ibstot->appendChild($gCBS);
         }
-        if (!empty($gMono_vIBSMono) || !empty($gMono_vCBSMono)) {
+        if (isset($gMono_vIBSMono)) {
             $gMono = $this->dom->createElement('gMono');
             $this->dom->addChild(
                 $gMono,

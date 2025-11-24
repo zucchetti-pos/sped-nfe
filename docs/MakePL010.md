@@ -370,13 +370,20 @@ $ide = [
         //5 - Nota de crédito
         //6 - Nota de débito
     'tpNFDebito' => '01', //opcional apenas PL_010 em diante
-        //01=Transferência de créditos para Cooperativas;
-        //02=Anulação de Crédito por Saídas Imunes/Isentas;
-        //03=Débitos de notas fiscais não processadas na apuração;
-        //04=Multa e juros;
-        //05=Transferência de crédito de sucessão.
+        //01 - Transferência de créditos para Cooperativas;
+        //02 - Anulação de Crédito por Saídas Imunes/Isentas;
+        //03 - Débitos de notas fiscais não processadas na apuração;
+        //04 - Multa e juros;
+        //05 - Transferência de crédito na sucessão;
+        //06 - Pagamento antecipado;
+        //07 - Perda em estoque;
+        //08 - Desenquadramento do SN;
     'tpNFCredito' => '01', //opcional apenas PL_010 em diante
-        //01 - a definir ?????????????????????????????????????????????
+        //01 - Multa e juros;
+        //02 - Apropriação de crédito presumido de IBS sobre o saldo devedor na ZFM (art. 450, § 1º, LC 214/25);
+        //03 - Retorno por recusa total na entrega ou por não localização do destinatário na tentativa de entrega;
+        //04 - Redução de valores;
+        //05 - Transferência de crédito na sucessão;
     'indFinal' => 0, // OBRIGATÓRIO 0 Normal; 1 Consumidor final;
     'indPres' => 9, // OBRIGATÓRIO
         //1 Operação presencial;
@@ -2291,11 +2298,10 @@ $mk->taggCredPresIBSZFM((object) $zfm);
 [Volta](#Métodos)
 
 ## function tagIBSCredPres(object $std): DOMElement    (NOVO MÉTODO Reforma Tributária)
-### REMOVIDO pela NT2025.002_v1.30 - PL_010_V1.30, não usar com essa PL  
-Node det/imposto/IBSCBS/gIBSCBS/gIBSCredPres
+Node det/imposto/IBSCBS/gCredPresOper/gIBSCredPres
 
 > Grupo de Informações do Crédito Presumido referente ao IBS, quando aproveitado pelo emitente do documento.
-> Este subgrupo pertence a gIBSCBS e somente será incluso caso gIBSCBS exista
+> Este subgrupo pertence a gCredPresOper e somente será incluso caso gCredPresOper exista
 > NOTA: é necessário usar a Tabela de Crédito Presumido fornecida pela Receita Federal, pois depende da operação sendo realizada 
 > vide https://dfe-portal.svrs.rs.gov.br/DFE/TabelaCreditoPresumido 
 
@@ -2306,7 +2312,6 @@ Node det/imposto/IBSCBS/gIBSCBS/gIBSCredPres
 ```php
 $cred = [
     'item' => 1, //OBRIGATÓRIO referencia ao item da NFe
-    'cCredPres' => '11', //OBRIGATÓRIO Código de Classificação do Crédito Presumido 2 caracteres
     'pCredPres' => 2.3234, //OBRIGATÓRIO Percentual do Crédito Presumido 3v2-4
     'vCredPres' => 22.30, //OBRIGATÓRIO Valor do Crédito Presumido 13v2
     'vCredPresCondSus' => 0, //OBRIGATÓRIO Valor do Crédito Presumido em condição suspensiva 13v2
@@ -2318,11 +2323,10 @@ $mk->tagIBSCredPres((object) $cred);
 [Volta](#Métodos)
 
 ## function tagCBSCredPres(object $std): DOMElement    (NOVO MÉTODO Reforma Tributária)
-### REMOVIDO pela NT2025.002_v1.30 - PL_010_V1.30, não usar com essa PL
-Node det/imposto/IBSCBS/gIBSCBS/gCBSCredPres
+Node det/imposto/IBSCBS/gCredPresOper/gCBSCredPres
 
 > Grupo de Informações do Crédito Presumido referente ao CBS, quando aproveitado pelo emitente do documento.
-> Este subgrupo pertence a gIBSCBS e somente será incluso caso gIBSCBS exista
+> Este subgrupo pertence a gCredPresOper e somente será incluso caso gCredPresOper exista
 > NOTA: é necessário usar a Tabela de Crédito Presumido fornecida pela Receita Federal, pois depende da operação sendo realizada
 > vide https://dfe-portal.svrs.rs.gov.br/DFE/TabelaCreditoPresumido
 
@@ -2333,7 +2337,6 @@ Node det/imposto/IBSCBS/gIBSCBS/gCBSCredPres
 ```php
 $cred = [
     'item' => 1, //OBRIGATÓRIO referencia ao item da NFe
-    'cCredPres' => '11', //OBRIGATÓRIO Código de Classificação do Crédito Presumido 2 caracteres
     'pCredPres' => 2.1111, //OBRIGATÓRIO Percentual do Crédito Presumido 3v2-4
     'vCredPres' => 12.34, //OBRIGATÓRIO Valor do Crédito Presumido 13v2
     'vCredPresCondSus' => 9.00, //OBRIGATÓRIO Valor do Crédito Presumido em condição suspensiva 13v2
