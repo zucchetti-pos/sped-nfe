@@ -105,6 +105,7 @@ class MakeDev
     protected bool $replaceAccentedChars = false;
     public Dom $dom;
     public stdClass $stdTot;
+    protected array $dataICMSTot;
     protected stdClass $stdISSQNTot;
     protected stdClass $stdIStot;
     protected stdClass $stdIBSCBSTot;
@@ -646,24 +647,24 @@ class MakeDev
                 $imposto = $this->aImposto[$item];
             }
             //ICMS => imposto
+            //ICMS => imposto
             $flagICMS = false;
+            $icms = $this->dom->createElement("ICMS");
             if (!empty($this->aICMS[$item])) {
                 $flagICMS = true;
-                $icms = $this->dom->createElement("ICMS");
                 $this->addTag($icms, $this->aICMS[$item]);
+            } elseif (!empty($this->aICMSPart[$item])) {
+                $flagICMS = true;
+                $this->addTag($icms, $this->aICMSPart[$item]);
+            } elseif (!empty($this->aICMSST[$item])) {
+                $flagICMS = true;
+                $this->addTag($icms, $this->aICMSST[$item]);
+            } elseif (!empty($this->aICMSSN[$item])) {
+                $flagICMS = true;
+                $this->addTag($icms, $this->aICMSSN[$item]);
+            }
+            if ($flagICMS) {
                 $this->addTag($imposto, $icms, 'Falta a tag det/imposto!');
-            }
-            if (!empty($this->aICMSST[$item])) {
-                $flagICMS = true;
-                $icmsst = $this->dom->createElement("ICMS");
-                $this->addTag($icmsst, $this->aICMSST[$item]);
-                $this->addTag($imposto, $icmsst, 'Falta a tag det/imposto!');
-            }
-            if (!empty($this->aICMSSN[$item])) {
-                $flagICMS = true;
-                $icmssn = $this->dom->createElement("ICMS");
-                $this->addTag($icmssn, $this->aICMSSN[$item]);
-                $this->addTag($imposto, $icmssn, 'Falta a tag det/imposto!');
             }
             //IPI => imposto
             if (!empty($this->aIPI[$item])) {
@@ -1124,7 +1125,7 @@ class MakeDev
         $identificador = 'W01 <total> -';
         $total = $this->dom->createElement('total');
         //Grupo Totais referentes ao ICMS
-        if (empty($this->ICMSTot)) {
+        if (empty($this->dataICMSTot)) {
             $icms = [
                 'vBC' => null,
                 'vICMS' => null,
@@ -1156,10 +1157,11 @@ class MakeDev
                 'qBCMonoRet' => null,
                 'vICMSMonoRet' => null,
             ];
-            $this->tagICMSTot((object)$icms);
+        } else {
+            $icms = $this->dataICMSTot;
         }
-        //Até 2036 esta tag deverá existir segundo a documentação atual da SEFAZ
-        $this->addTag($total, $this->ICMSTot);
+        $this->buildTagICMSTot((object)$icms);
+        $this->addTag($total, $this->ICMSTot ?? null);
         //Grupo Totais referentes ao ISSQN
         if (empty($this->ISSQNTot) && $this->stdISSQNTot->vServ > 0) {
             $iss = [

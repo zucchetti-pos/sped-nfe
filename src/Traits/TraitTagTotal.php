@@ -45,10 +45,9 @@ trait TraitTagTotal
      * Grupo Totais referentes ao ICMS W02 pai W01
      * tag NFe/infNFe/total/ICMSTot
      * @param stdClass $std
-     * @return DOMElement
-     * @throws DOMException
+     * @return void
      */
-    public function tagICMSTot(stdClass $std): DOMElement
+    public function tagICMSTot(stdClass $std)
     {
         $possible = [
             'vBC',
@@ -80,7 +79,52 @@ trait TraitTagTotal
             'vICMSMonoReten',
             'qBCMonoRet',
             'vICMSMonoRet',
-            '$vTotTrib'
+            'vTotTrib'
+        ];
+        $std = $this->equilizeParameters($std, $possible);
+        $this->dataICMSTot = json_decode(json_encode($std), true);
+    }
+
+    /**
+     * Construtor do grupo ICMSTot
+     * tag NFe/infNFe/total/ICMSTot
+     * @param stdClass $std
+     * @return DOMElement
+     * @throws DOMException
+     */
+    public function buildTagICMSTot(stdClass $std): DOMElement
+    {
+        $possible = [
+            'vBC',
+            'vICMS',
+            'vICMSDeson',
+            'vBCST',
+            'vST',
+            'vProd',
+            'vFrete',
+            'vSeg',
+            'vDesc',
+            'vII',
+            'vIPI',
+            'vPIS',
+            'vCOFINS',
+            'vOutro',
+            'vNF',
+            'vIPIDevol',
+            'vTotTrib',
+            'vFCP',
+            'vFCPST',
+            'vFCPSTRet',
+            'vFCPUFDest',
+            'vICMSUFDest',
+            'vICMSUFRemet',
+            'qBCMono',
+            'vICMSMono',
+            'qBCMonoReten',
+            'vICMSMonoReten',
+            'qBCMonoRet',
+            'vICMSMonoRet',
+            'vTotTrib'
         ];
         $std = $this->equilizeParameters($std, $possible);
         $identificador = "W01 <ICMSTot> -";
@@ -120,7 +164,6 @@ trait TraitTagTotal
         $vICMSUFDest = ($vICMSUFDest > 0) ? number_format($vICMSUFDest, 2, '.', '') : null;
         $vICMSUFRemet = ($vICMSUFRemet > 0) ? number_format($vICMSUFRemet, 2, '.', '') : null;
         $vTotTrib = ($vTotTrib > 0) ? number_format($vTotTrib, 2, '.', '') : null;
-
 
         //campos obrigatórios para 4.00
         $vFCP = number_format($vFCP, 2, '.', '');
@@ -796,6 +839,11 @@ trait TraitTagTotal
         ];
         $std = $this->equilizeParameters($std, $possible);
         $identificador = "W23 retTrib -";
+        $this->stdTot->vRetPIS = $std->vRetPIS ?? 0;
+        $this->stdTot->vRetCOFINS = $std->vRetCOFINS ?? 0;
+        $this->stdTot->vRetCSLL = $std->vRetCSLL ?? 0;
+        $this->stdTot->vRetIRRF = $std->vIRRF ?? 0;
+        $this->stdTot->vRetPrev = $std->vRetPrev ?? 0;
         $retTrib = $this->dom->createElement("retTrib");
         $this->dom->addChild(
             $retTrib,

@@ -101,7 +101,7 @@ trait TraitTagDetIBSCBS
         $this->aVItem[$std->item]['vIBS'] = $vIBSItem;
         $this->aVItem[$std->item]['vCBS'] = ($std->vCBS ?? 0);
         //totalizador do IBS e CBS
-        if (!empty($std->vBC)) {
+        if (isset($std->vBC)) {
             $this->stdIBSCBSTot->vBCIBSCBS += $std->vBC ?? 0;
             $this->stdIBSCBSTot->gIBSUF->vDif += $std->gIBSUF_vDif ?? 0;
             $this->stdIBSCBSTot->gIBSUF->vDevTrib += $std->gIBSUF_vDevTrib ?? 0;
@@ -142,13 +142,13 @@ trait TraitTagDetIBSCBS
             $this->flagIBSCBS = true;
         }
         //gIBSCBS é opcional e também é um choice com IBSCBSMono
-        if (!is_null($std->vBC) && is_numeric($std->vBC) && $std->vBC > 0) {
+        if (!is_null($std->vBC) && is_numeric($std->vBC)) {
             $identificador = "UB12 <IBSCBS/gIBSCBS> -";
             $gIBSCBS = $this->dom->createElement("gIBSCBS");
             $this->dom->addChild(
                 $gIBSCBS,
                 "vBC",
-                $this->conditionalNumberFormatting($std->vBC),
+                $this->conditionalNumberFormatting($std->vBC ?? 0),
                 true,
                 "$identificador Base de cálculo do IBS e CBS (vBC)"
             );
@@ -157,17 +157,17 @@ trait TraitTagDetIBSCBS
             $this->dom->addChild(
                 $gIBSUF,
                 "pIBSUF",
-                $this->conditionalNumberFormatting($std->gIBSUF_pIBSUF, 4),
+                $this->conditionalNumberFormatting($std->gIBSUF_pIBSUF ?? 0, 4),
                 true,
                 "$identificador Alíquota do IBS de competência das UF (pIBSUF)"
             );
-            if (!is_null($std->gIBSUF_pDif)) {
+            if (isset($std->gIBSUF_pDif)) {
                 $gDif = $this->dom->createElement("gDif");
                 $this->dom->addChild(
                     $gDif,
                     "pDif",
-                    $this->conditionalNumberFormatting($std->gIBSUF_pDif ?? 0, 4),
-                    true,
+                    $this->conditionalNumberFormatting($std->gIBSUF_pDif, 4),
+                    false,
                     "$identificador Percentual do diferimento (pDif)"
                 );
                 $this->dom->addChild(
@@ -179,7 +179,7 @@ trait TraitTagDetIBSCBS
                 );
                 $gIBSUF->appendChild($gDif);
             }
-            if (!is_null($std->gIBSUF_vDevTrib)) {
+            if (isset($std->gIBSUF_vDevTrib)) {
                 //Grupo de Informações da devolução de tributos IBSUF
                 $gDevTrib = $this->dom->createElement("gDevTrib");
                 $this->dom->addChild(
@@ -191,7 +191,7 @@ trait TraitTagDetIBSCBS
                 );
                 $gIBSUF->appendChild($gDevTrib);
             }
-            if (!is_null($std->gIBSUF_pRedAliq)) {
+            if (isset($std->gIBSUF_pRedAliq)) {
                 //Grupo de informações da redução da alíquota
                 $gRed = $this->dom->createElement("gRed");
                 $this->dom->addChild(
@@ -230,7 +230,7 @@ trait TraitTagDetIBSCBS
                 true,
                 "$identificador Alíquota do IBS de competência do Município (pIBSMun)"
             );
-            if (!is_null($std->gIBSMun_pDif)) {
+            if (isset($std->gIBSMun_pDif)) {
                 $gDif = $this->dom->createElement("gDif");
                 $this->dom->addChild(
                     $gDif,
@@ -248,7 +248,7 @@ trait TraitTagDetIBSCBS
                 );
                 $gIBSMun->appendChild($gDif);
             }
-            if (!is_null($std->gIBSMun_vDevTrib)) {
+            if (isset($std->gIBSMun_vDevTrib)) {
                 //Grupo de Informações da devolução de tributos
                 $gDevTrib = $this->dom->createElement("gDevTrib");
                 $this->dom->addChild(
@@ -260,7 +260,7 @@ trait TraitTagDetIBSCBS
                 );
                 $gIBSMun->appendChild($gDevTrib);
             }
-            if (!is_null($std->gIBSMun_pRedAliq)) {
+            if (isset($std->gIBSMun_pRedAliq)) {
                 //Grupo de informações da redução da alíquota IBSMun
                 $gRed = $this->dom->createElement("gRed");
                 $this->dom->addChild(
@@ -306,7 +306,7 @@ trait TraitTagDetIBSCBS
                 true,
                 "$identificador Alíquota da CBS (pCBS)"
             );
-            if (!is_null($std->gCBS_pDif)) {
+            if (isset($std->gCBS_pDif)) {
                 $gDif = $this->dom->createElement("gDif");
                 $this->dom->addChild(
                     $gDif,
@@ -324,7 +324,7 @@ trait TraitTagDetIBSCBS
                 );
                 $gCBS->appendChild($gDif);
             }
-            if (!is_null($std->gCBS_vDevTrib)) {
+            if (isset($std->gCBS_vDevTrib)) {
                 //Grupo de Informações da devolução de tributos
                 $gDevTrib = $this->dom->createElement("gDevTrib");
                 $this->dom->addChild(
@@ -336,7 +336,7 @@ trait TraitTagDetIBSCBS
                 );
                 $gCBS->appendChild($gDevTrib);
             }
-            if (!is_null($std->gCBS_pRedAliq)) {
+            if (isset($std->gCBS_pRedAliq)) {
                 //Grupo de informações da redução da alíquota CBS
                 $gRed = $this->dom->createElement("gRed");
                 $this->dom->addChild(
@@ -359,7 +359,7 @@ trait TraitTagDetIBSCBS
             $this->dom->addChild(
                 $gCBS,
                 "vCBS",
-                $this->conditionalNumberFormatting($std->gCBS_vCBS ?? null),
+                $this->conditionalNumberFormatting($std->gCBS_vCBS ?? 0),
                 true,
                 "$identificador Valor do CBS (vCBS)"
             );
