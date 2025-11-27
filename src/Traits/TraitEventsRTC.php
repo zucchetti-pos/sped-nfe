@@ -224,7 +224,7 @@ trait TraitEventsRTC
         $tagAdic = "<cOrgaoAutor>{$this->cUF}</cOrgaoAutor>"
             . "<tpAutor>2</tpAutor>" //2=Empresa destinatária
             . "<verAplic>{$verAplic}</verAplic>"
-            . "<indAceitacao>1</indAceitacao>";
+            . "<indAceitacao>{$std->indAceitacao}</indAceitacao>";
         return $this->sefazEvento(
             'SVRS',
             $std->chNFe,
@@ -434,7 +434,7 @@ trait TraitEventsRTC
         $tagAdic = "<cOrgaoAutor>{$this->cUF}</cOrgaoAutor>"
             . "<tpAutor>8</tpAutor>" //8= Empresa sucessora
             . "<verAplic>{$verAplic}</verAplic>"
-            . "<indAceitacao>1</indAceitacao>";
+            . "<indAceitacao>{$std->indAceitacao}</indAceitacao>";
         return $this->sefazEvento(
             'SVRS',
             $std->chNFe,
@@ -472,7 +472,7 @@ trait TraitEventsRTC
         $tagAdic = "<cOrgaoAutor>{$this->cUF}</cOrgaoAutor>"
             . "<tpAutor>8</tpAutor>" //8= Empresa sucessora
             . "<verAplic>{$verAplic}</verAplic>"
-            . "<indAceitacao>1</indAceitacao>";
+            . "<indAceitacao>$std->indAceitacao</indAceitacao>";
         return $this->sefazEvento(
             'SVRS',
             $std->chNFe,
