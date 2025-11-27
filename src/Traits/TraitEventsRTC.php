@@ -472,7 +472,7 @@ trait TraitEventsRTC
         $tagAdic = "<cOrgaoAutor>{$this->cUF}</cOrgaoAutor>"
             . "<tpAutor>8</tpAutor>" //8= Empresa sucessora
             . "<verAplic>{$verAplic}</verAplic>"
-            . "<indAceitacao>$std->indAceitacao</indAceitacao>";
+            . "<indAceitacao>{$std->indAceitacao}</indAceitacao>";
         return $this->sefazEvento(
             'SVRS',
             $std->chNFe,
