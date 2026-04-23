@@ -609,8 +609,6 @@
             <pMVAST>string</pMVAST>
             <!--Optional:-->
             <pRedBCST>string</pRedBCST>
-            <!--Optional:-->
-            <vICMSOp>string<vICMSOp>
             <vBCST>string</vBCST>
             <pICMSST>string</pICMSST>
             <vICMSST>string</vICMSST>
