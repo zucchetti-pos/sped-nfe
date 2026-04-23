@@ -610,7 +610,7 @@
             <!--Optional:-->
             <pRedBCST>string</pRedBCST>
             <!--Optional:-->
-            <vICMSOp>string</vICMSOp>
+            <vICMSOp>string<vICMSOp>
             <vBCST>string</vBCST>
             <pICMSST>string</pICMSST>
             <vICMSST>string</vICMSST>

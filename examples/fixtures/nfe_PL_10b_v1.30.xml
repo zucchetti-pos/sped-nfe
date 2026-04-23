@@ -661,8 +661,6 @@
             <indDeduzDeson>1</indDeduzDeson>
             <vICMSSTDeson>string</vICMSSTDeson>
             <motDesICMSST>12</motDesICMSST>
-            <!--Optional:-->
-            <vICMSOp>string</vICMSOp>
           </ICMS90>
           <ICMSPart>
             <orig>8</orig>
