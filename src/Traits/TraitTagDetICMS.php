@@ -1411,6 +1411,52 @@ trait TraitTagDetICMS
                     false,
                     "$identificador Motivo da desoneração do ICMS-ST"
                 );
+                /* nt X */
+                $this->dom->addChild(
+                    $icms,
+                    'vICMSOp',
+                    $this->conditionalNumberFormatting($std->vICMSOp),
+                    false,
+                    "$identificador Valor do ICMS da Operação"
+                );
+                $this->dom->addChild(
+                    $icms,
+                    'pDif',
+                    $this->conditionalNumberFormatting($std->pDif, 4),
+                    false,
+                    "$identificador Percentual do diferimento"
+                );
+                $this->dom->addChild(
+                    $icms,
+                    'vICMSDif',
+                    $this->conditionalNumberFormatting($std->vICMSDif),
+                    false,
+                    "$identificador Valor do ICMS diferido"
+                );
+                   $this->dom->addChild(
+                    $icms,
+                    'pFCPDif',
+                    $this->conditionalNumberFormatting($std->pFCPDif),
+                    false,
+                    "$identificador Percentual do diferimento "
+                    . "do ICMS relativo ao Fundo de Combate à Pobreza (FCP)"
+                );
+                $this->dom->addChild(
+                    $icms,
+                    'vFCPDif',
+                    $this->conditionalNumberFormatting($std->vFCPDif),
+                    false,
+                    "$identificador Valor do ICMS relativo ao "
+                    . "Fundo de Combate à Pobreza (FCP) diferido"
+                );
+                $this->dom->addChild(
+                    $icms,
+                    'vFCPEfet',
+                    $this->conditionalNumberFormatting($std->vFCPEfet),
+                    false,
+                    "$identificador Valor efetivo do ICMS relativo "
+                    . "ao Fundo de Combate à Pobreza (FCP)"
+                );
                 break;
         }
         $this->aICMS[$std->item] = $icms;
