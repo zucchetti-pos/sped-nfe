@@ -1276,6 +1276,13 @@ trait TraitTagDetICMS
                 );
                 $this->dom->addChild(
                     $icms,
+                    'cBenefRBC',
+                    $std->cBenefRBC ?? null,
+                    false,
+                    "$identificador Código de Benefício Fiscal na UF aplicado ao item quando houver RBC"
+                );
+                $this->dom->addChild(
+                    $icms,
                     'pICMS',
                     $this->conditionalNumberFormatting($std->pICMS, 4),
                     false,
