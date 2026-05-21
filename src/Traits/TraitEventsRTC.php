@@ -183,7 +183,7 @@ trait TraitEventsRTC
                 . "</gControleEstoque>"
                 . "<DFeReferenciado>"
                 . "<chaveAcesso>{$item->chave}</chaveAcesso>"
-                . "<nItemDFeRef>{$item->nItem}</nItemDFeRef>"
+                . "<nItem>{$item->nItem}</nItem>"
                 . "</DFeReferenciado>"
                 . "</gConsumo>";
             $tagAdic .= $gc;
@@ -224,7 +224,7 @@ trait TraitEventsRTC
         $tagAdic = "<cOrgaoAutor>{$this->cUF}</cOrgaoAutor>"
             . "<tpAutor>2</tpAutor>" //2=Empresa destinatária
             . "<verAplic>{$verAplic}</verAplic>"
-            . "<indAceitacao>1</indAceitacao>";
+            . "<indAceitacao>{$std->indAceitacao}</indAceitacao>";
         return $this->sefazEvento(
             'SVRS',
             $std->chNFe,
@@ -434,7 +434,7 @@ trait TraitEventsRTC
         $tagAdic = "<cOrgaoAutor>{$this->cUF}</cOrgaoAutor>"
             . "<tpAutor>8</tpAutor>" //8= Empresa sucessora
             . "<verAplic>{$verAplic}</verAplic>"
-            . "<indAceitacao>1</indAceitacao>";
+            . "<indAceitacao>{$std->indAceitacao}</indAceitacao>";
         return $this->sefazEvento(
             'SVRS',
             $std->chNFe,
@@ -472,7 +472,7 @@ trait TraitEventsRTC
         $tagAdic = "<cOrgaoAutor>{$this->cUF}</cOrgaoAutor>"
             . "<tpAutor>8</tpAutor>" //8= Empresa sucessora
             . "<verAplic>{$verAplic}</verAplic>"
-            . "<indAceitacao>1</indAceitacao>";
+            . "<indAceitacao>{$std->indAceitacao}</indAceitacao>";
         return $this->sefazEvento(
             'SVRS',
             $std->chNFe,
@@ -500,7 +500,6 @@ trait TraitEventsRTC
         $verAplic = $this->resolveVerAplic($verAplic);
         $tpEvento = '110001';
         $tagAdic = "<cOrgaoAutor>{$this->cUF}</cOrgaoAutor>"
-            . "<tpAutor>{$std->tpAutor}</tpAutor>"
             . "<verAplic>{$verAplic}</verAplic>"
             . "<tpEventoAut>{$std->tpEventoAut}</tpEventoAut>"
             . "<nProtEvento>{$std->nProtEvento}</nProtEvento>";
@@ -675,14 +674,13 @@ trait TraitEventsRTC
         $verAplic = $this->resolveVerAplic($verAplic);
         $tpEvento = '112140';
         $tagAdic = "<cOrgaoAutor>{$this->cUF}</cOrgaoAutor>"
-            . "<tpAutor>1</tpAutor>" //2=Empresa emitente
+            . "<tpAutor>1</tpAutor>" //1=Empresa emitente
             . "<verAplic>{$verAplic}</verAplic>";
         foreach ($std->itens as $item) {
             $vi = number_format($item->vIBS, 2, '.', '');
             $vc = number_format($item->vCBS, 2, '.', '');
             $qtd = number_format($item->quantidade, 4, '.', '');
-            $gc = "<gItemNaoFornecido>"
-                . "<nItem>{$item->item}</nItem>"
+            $gc = "<gItemNaoFornecido nItem=\"{$item->item}\">"
                 . "<vIBS>{$vi}</vIBS>"
                 . "<vCBS>{$vc}</vCBS>"
                 . "<gControleEstoque>"
@@ -692,6 +690,38 @@ trait TraitEventsRTC
                 . "</gItemNaoFornecido>";
             $tagAdic .= $gc;
         }
+        return $this->sefazEvento(
+            'SVRS',
+            $std->chNFe,
+            $tpEvento,
+            $std->nSeqEvento ?? 1,
+            $tagAdic,
+            null,
+            null
+        );
+    }
+
+    /**
+     * Evento: Atualização da Data de Previsão de Entrega
+     * Função: Permitir ao fornecedor atualizar a data da previsão de entrega ou disponibilização do bem ao adquirente,
+     * de forma à remover o débito do mês em que foi previsto inicialmente.
+     * Modelo: NF-e modelo 55
+     * Autor do Evento: emitente da NF-e
+     * Código do Tipo de Evento: 112150
+     * @param stdClass $std
+     * @param string|null $verAplic
+     * @return string
+     */
+    public function sefazAtualizacaoDataEntrega(stdClass $std, ?string $verAplic = null): string
+    {
+        //apenas 55
+        $this->checkModel($std);
+        $verAplic = $this->resolveVerAplic($verAplic);
+        $tpEvento = '112150';
+        $tagAdic = "<cOrgaoAutor>{$this->cUF}</cOrgaoAutor>"
+            . "<tpAutor>1</tpAutor>" //1=Empresa emitente
+            . "<verAplic>{$verAplic}</verAplic>"
+            . "<dPrevEntrega>{$std->data_prevista}</dPrevEntrega>";
         return $this->sefazEvento(
             'SVRS',
             $std->chNFe,

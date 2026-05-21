@@ -20,6 +20,7 @@ use DOMException;
  * @property array $aGCredPresIBSZFM
  * @property array $aGAjusteCompet
  * @property array $aGEstornoCred
+ * @property array $aGCredPresOper
  * @property string $cst_ibscbs
  * @property stdClass $stdIBSCBSTot
  * @property stdClass $stdIBSCredPresTot
@@ -31,7 +32,8 @@ use DOMException;
  * @property stdClass $stdGIBSCBS
  * @property stdClass $stdGIBSCBSMono
  * @property stdClass $stdGTransfCred
- * @property stdClass $aGCredPresOper
+ * @property bool $flagIBSCBS
+ * @property bool $flagMono
  *
  * @method equilizeParameters($std, $possible)
  * @method conditionalNumberFormatting($value, $decimal = 2)
@@ -56,6 +58,7 @@ trait TraitTagDetIBSCBS
             'cClassTrib',
             'indDoacao',
             'vBC',
+            'vIBS',
             //dados IBS Estadual
             'gIBSUF_pIBSUF', //opcional Alíquota do IBS de competência das UF 3v2-4, OBRIGATÓRIO se vBC for informado
             'gIBSUF_pDif', //opcional Percentual do diferimento 3v2-4
@@ -88,28 +91,30 @@ trait TraitTagDetIBSCBS
         $std = $this->equilizeParameters($std, $possible);
         $this->cst_ibscbs = $std->CST ?? null;
         $identificador = "UB12 IBSCBS Item $std->item -";
-        //totalizador do IBS e CBS
-        isset($std->vBC) ? $this->stdIBSCBSTot->vBCIBSCBS += $std->vBC : null;
-        isset($std->gIBSUF_vDif) ? $this->stdIBSCBSTot->gIBSUF->vDif += $std->gIBSUF_vDif : null;
-        isset($std->gIBSUF_vDevTrib) ? $this->stdIBSCBSTot->gIBSUF->vDevTrib += $std->gIBSUF_vDevTrib : null;
-        isset($std->gIBSUF_vIBSUF) ? $this->stdIBSCBSTot->gIBSUF->vIBSUF += $std->gIBSUF_vIBSUF : null;
-        isset($std->gIBSUF_vIBSUF) ? $this->stdIBSCBSTot->vIBS += $std->gIBSUF_vIBSUF : null;
-
-        isset($std->gIBSMun_vDif) ? $this->stdIBSCBSTot->gIBSMun->vDif += $std->gIBSMun_vDif : null;
-        isset($std->gIBSMun_vDevTrib) ? $this->stdIBSCBSTot->gIBSMun->vDevTrib += $std->gIBSMun_vDevTrib : null;
-        isset($std->gIBSMun_vIBSMun) ? $this->stdIBSCBSTot->gIBSMun->vIBSMun += $std->gIBSMun_vIBSMun : null;
-        isset($std->gIBSMun_vIBSMun) ? $this->stdIBSCBSTot->vIBS += $std->gIBSMun_vIBSMun : null;
-        $vIBSItem = null;
-        if (isset($std->gIBSUF_vIBSUF)) {
-            $vIBSItem = $std->gIBSUF_vIBSUF;
-            if (isset($std->gIBSMun_vIBSMun)) {
-                $vIBSItem += $std->gIBSMun_vIBSMun;
-            }
+        //dados para calculo do vItem
+        if (empty($this->aVItem[$std->item])) {
+            $this->aVItem[$std->item] = $this->aVItemStruct;
         }
-        isset($std->gCBS_vDif) ? $this->stdIBSCBSTot->gCBS->vDif += $std->gCBS_vDif : null;
-        isset($std->gCBS_vDevTrib) ? $this->stdIBSCBSTot->gCBS->vDevTrib += $std->gCBS_vDevTrib : null;
-        isset($std->gCBS_vCBS) ? $this->stdIBSCBSTot->vCBS += $std->gCBS_vCBS : null;
 
+        //vIBS = vIBSUF + vIBSMun
+        $vIBSItem = ($std->gIBSUF_vIBSUF ?? 0) + ($std->gIBSMun_vIBSMun ?? 0);
+        $this->aVItem[$std->item]['vIBS'] = $vIBSItem;
+        $this->aVItem[$std->item]['vCBS'] = ($std->vCBS ?? 0);
+        //totalizador do IBS e CBS
+        if (isset($std->vBC)) {
+            $this->stdIBSCBSTot->vBCIBSCBS += $std->vBC ?? 0;
+            $this->stdIBSCBSTot->gIBSUF->vDif += $std->gIBSUF_vDif ?? 0;
+            $this->stdIBSCBSTot->gIBSUF->vDevTrib += $std->gIBSUF_vDevTrib ?? 0;
+            $this->stdIBSCBSTot->gIBSUF->vIBSUF += $std->gIBSUF_vIBSUF ?? 0;
+            $this->stdIBSCBSTot->vIBS += $std->gIBSUF_vIBSUF ?? 0;
+            $this->stdIBSCBSTot->gIBSMun->vDif += $std->gIBSMun_vDif ?? 0;
+            $this->stdIBSCBSTot->gIBSMun->vDevTrib += $std->gIBSMun_vDevTrib ?? 0;
+            $this->stdIBSCBSTot->gIBSMun->vIBSMun += $std->gIBSMun_vIBSMun ?? 0;
+            $this->stdIBSCBSTot->vIBS += $std->gIBSMun_vIBSMun ?? 0;
+            $this->stdIBSCBSTot->gCBS->vDif += $std->gCBS_vDif ?? 0;
+            $this->stdIBSCBSTot->gCBS->vDevTrib += $std->gCBS_vDevTrib ?? 0;
+            $this->stdIBSCBSTot->vCBS += $std->gCBS_vCBS ?? 0;
+        }
         $ibscbs = $this->dom->createElement("IBSCBS");
         $this->dom->addChild(
             $ibscbs,
@@ -133,6 +138,9 @@ trait TraitTagDetIBSCBS
             "$identificador Indica a natureza da operação de doação, orientando a apuração e a geração"
                 . "de débitos ou estornos conforme o cenário (indDoacao)"
         );
+        if (!empty($std->cClassTrib)) {
+            $this->flagIBSCBS = true;
+        }
         //gIBSCBS é opcional e também é um choice com IBSCBSMono
         if (!is_null($std->vBC) && is_numeric($std->vBC)) {
             $identificador = "UB12 <IBSCBS/gIBSCBS> -";
@@ -140,7 +148,7 @@ trait TraitTagDetIBSCBS
             $this->dom->addChild(
                 $gIBSCBS,
                 "vBC",
-                $this->conditionalNumberFormatting($std->vBC),
+                $this->conditionalNumberFormatting($std->vBC ?? 0),
                 true,
                 "$identificador Base de cálculo do IBS e CBS (vBC)"
             );
@@ -149,17 +157,17 @@ trait TraitTagDetIBSCBS
             $this->dom->addChild(
                 $gIBSUF,
                 "pIBSUF",
-                $this->conditionalNumberFormatting($std->gIBSUF_pIBSUF, 4),
+                $this->conditionalNumberFormatting($std->gIBSUF_pIBSUF ?? 0, 4),
                 true,
                 "$identificador Alíquota do IBS de competência das UF (pIBSUF)"
             );
-            if (!is_null($std->gIBSUF_pDif)) {
+            if (isset($std->gIBSUF_pDif)) {
                 $gDif = $this->dom->createElement("gDif");
                 $this->dom->addChild(
                     $gDif,
                     "pDif",
-                    $this->conditionalNumberFormatting($std->gIBSUF_pDif ?? 0, 4),
-                    true,
+                    $this->conditionalNumberFormatting($std->gIBSUF_pDif, 4),
+                    false,
                     "$identificador Percentual do diferimento (pDif)"
                 );
                 $this->dom->addChild(
@@ -171,7 +179,7 @@ trait TraitTagDetIBSCBS
                 );
                 $gIBSUF->appendChild($gDif);
             }
-            if (!is_null($std->gIBSUF_vDevTrib)) {
+            if (isset($std->gIBSUF_vDevTrib)) {
                 //Grupo de Informações da devolução de tributos IBSUF
                 $gDevTrib = $this->dom->createElement("gDevTrib");
                 $this->dom->addChild(
@@ -183,7 +191,7 @@ trait TraitTagDetIBSCBS
                 );
                 $gIBSUF->appendChild($gDevTrib);
             }
-            if (!is_null($std->gIBSUF_pRedAliq)) {
+            if (isset($std->gIBSUF_pRedAliq)) {
                 //Grupo de informações da redução da alíquota
                 $gRed = $this->dom->createElement("gRed");
                 $this->dom->addChild(
@@ -222,7 +230,7 @@ trait TraitTagDetIBSCBS
                 true,
                 "$identificador Alíquota do IBS de competência do Município (pIBSMun)"
             );
-            if (!is_null($std->gIBSMun_pDif)) {
+            if (isset($std->gIBSMun_pDif)) {
                 $gDif = $this->dom->createElement("gDif");
                 $this->dom->addChild(
                     $gDif,
@@ -240,7 +248,7 @@ trait TraitTagDetIBSCBS
                 );
                 $gIBSMun->appendChild($gDif);
             }
-            if (!is_null($std->gIBSMun_vDevTrib)) {
+            if (isset($std->gIBSMun_vDevTrib)) {
                 //Grupo de Informações da devolução de tributos
                 $gDevTrib = $this->dom->createElement("gDevTrib");
                 $this->dom->addChild(
@@ -252,7 +260,7 @@ trait TraitTagDetIBSCBS
                 );
                 $gIBSMun->appendChild($gDevTrib);
             }
-            if (!is_null($std->gIBSMun_pRedAliq)) {
+            if (isset($std->gIBSMun_pRedAliq)) {
                 //Grupo de informações da redução da alíquota IBSMun
                 $gRed = $this->dom->createElement("gRed");
                 $this->dom->addChild(
@@ -281,13 +289,10 @@ trait TraitTagDetIBSCBS
             );
             $gIBSCBS->appendChild($gIBSMun);
             //Valor do IBS (soma de vIBSUF e vIBSMun).
-            //Quando houver crédito presumido com indicador
-            //“IndDeduzCredPres=1”, o vCredPres deve ser
-            //abatido desse valor.
             $this->dom->addChild(
                 $gIBSCBS,
                 "vIBS",
-                $this->conditionalNumberFormatting($std->gIBS_vIBS),
+                $this->conditionalNumberFormatting($std->vIBS ?? $vIBSItem),
                 true,
                 "$identificador Valor do Total do IBS"
             );
@@ -301,7 +306,7 @@ trait TraitTagDetIBSCBS
                 true,
                 "$identificador Alíquota da CBS (pCBS)"
             );
-            if (!is_null($std->gCBS_pDif)) {
+            if (isset($std->gCBS_pDif)) {
                 $gDif = $this->dom->createElement("gDif");
                 $this->dom->addChild(
                     $gDif,
@@ -319,7 +324,7 @@ trait TraitTagDetIBSCBS
                 );
                 $gCBS->appendChild($gDif);
             }
-            if (!is_null($std->gCBS_vDevTrib)) {
+            if (isset($std->gCBS_vDevTrib)) {
                 //Grupo de Informações da devolução de tributos
                 $gDevTrib = $this->dom->createElement("gDevTrib");
                 $this->dom->addChild(
@@ -331,7 +336,7 @@ trait TraitTagDetIBSCBS
                 );
                 $gCBS->appendChild($gDevTrib);
             }
-            if (!is_null($std->gCBS_pRedAliq)) {
+            if (isset($std->gCBS_pRedAliq)) {
                 //Grupo de informações da redução da alíquota CBS
                 $gRed = $this->dom->createElement("gRed");
                 $this->dom->addChild(
@@ -354,7 +359,7 @@ trait TraitTagDetIBSCBS
             $this->dom->addChild(
                 $gCBS,
                 "vCBS",
-                $this->conditionalNumberFormatting($std->gCBS_vCBS ?? null),
+                $this->conditionalNumberFormatting($std->gCBS_vCBS ?? 0),
                 true,
                 "$identificador Valor do CBS (vCBS)"
             );
@@ -448,122 +453,6 @@ trait TraitTagDetIBSCBS
         );
         $this->aGTribRegular[$std->item] = $gTribRegular;
         return $gTribRegular;
-    }
-
-    /**
-     * REMOVIDO PELA NT 2025.002_V1.30 - PL_010_V1.30
-     * Grupo de Informações do Crédito Presumido referente ao IBS UB73 pai UB15
-     * $this->aIBSCredPres[$item]/gIBSCredPres
-     * IBSCBS/gIBSCBS/gIBSCredPres
-     * @param stdClass $std
-     * @return DOMElement
-     * @throws DOMException
-     */
-    public function tagIBSCredPres(stdClass $std): DOMElement
-    {
-        $possible = [
-            'item',
-            'cCredPres',
-            'pCredPres',
-            'vCredPres',
-            'vCredPresCondSus',
-        ];
-        $std = $this->equilizeParameters($std, $possible);
-        //Totalizador
-        isset($std->vCredPres) ? $this->stdIBSCBSTot->vCredPres += $std->vCredPres : null;
-        isset($std->vCredPresCondSus) ? $this->stdIBSCBSTot->vCredPresCondSus += $std->vCredPresCondSus : null;
-        $identificador = "UB73 gIBSCredPres Item: $std->item -";
-        $gIBSCredPres = $this->dom->createElement("gIBSCredPres");
-        $this->dom->addChild(
-            $gIBSCredPres,
-            "cCredPres",
-            $std->cCredPres,
-            true,
-            "$identificador Código de Classificação do Crédito Presumido (cCredPres)"
-        );
-        $this->dom->addChild(
-            $gIBSCredPres,
-            "pCredPres",
-            $this->conditionalNumberFormatting($std->pCredPres, 4),
-            true,
-            "$identificador Percentual do Crédito Presumido (pCredPres)"
-        );
-        $this->dom->addChild(
-            $gIBSCredPres,
-            "vCredPres",
-            $this->conditionalNumberFormatting($std->vCredPres),
-            true,
-            "$identificador Valor do Crédito Presumido (vCredPres)"
-        );
-        if ($this->isIBSCredPresSusBlocked()) {
-            $this->dom->addChild(
-                $gIBSCredPres,
-                "vCredPresCondSus",
-                $this->conditionalNumberFormatting($std->vCredPresCondSus),
-                true,
-                "$identificador Valor do Crédito Presumido em condição suspensiva. (vCredPres)"
-            );
-        }
-        $this->aIBSCredPres[$std->item] = $gIBSCredPres;
-        return $gIBSCredPres;
-    }
-
-    /**
-     * REMOVIDO PELA NT 2025.002_V1.30 - PL_010_V1.30
-     * Grupo de Informações do Crédito Presumido referente ao CBS UB78 pai UB15
-     * $this->aCBSCredPres[$item]/gCBSCredPres
-     * IBSCBS/gCBSCBS/gCBSCredPres
-     * @param stdClass $std
-     * @return DOMElement
-     * @throws DOMException
-     */
-    public function tagCBSCredPres(stdClass $std): DOMElement
-    {
-        $possible = [
-            'item',
-            'cCredPres',
-            'pCredPres',
-            'vCredPres',
-            'vCredPresCondSus',
-        ];
-        $std = $this->equilizeParameters($std, $possible);
-        //Totalizador
-        $this->stdIBSCBSTot->vCredPres += $std->vCredPres ?? 0;
-        $this->stdIBSCBSTot->vCredPresCondSus += $std->vCredPresCondSus ?? 0;
-        $identificador = "UB78 gCBSCredPres Item: $std->item -";
-        $gCBSCredPres = $this->dom->createElement("gCBSCredPres");
-        $this->dom->addChild(
-            $gCBSCredPres,
-            "cCredPres",
-            $std->cCredPres,
-            true,
-            "$identificador Código de Classificação do Crédito Presumido (cCredPres)"
-        );
-        $this->dom->addChild(
-            $gCBSCredPres,
-            "pCredPres",
-            $this->conditionalNumberFormatting($std->pCredPres, 4),
-            true,
-            "$identificador Percentual do Crédito Presumido (pCredPres)"
-        );
-        $this->dom->addChild(
-            $gCBSCredPres,
-            "vCredPres",
-            $this->conditionalNumberFormatting($std->vCredPres),
-            true,
-            "$identificador Valor do Crédito Presumido (vCredPres)"
-        );
-        if ($this->isCBSCredPresSusBlocked()) {
-            $this->dom->addChild(
-                $gCBSCredPres,
-                "vCredPresCondSus",
-                $this->conditionalNumberFormatting($std->vCredPresCondSus),
-                true,
-                "$identificador Valor do Crédito Presumido em condição suspensiva. (vCredPres)"
-            );
-        }
-        $this->aCBSCredPres[$std->item] = $gCBSCredPres;
-        return $gCBSCredPres;
     }
 
     /**
@@ -667,14 +556,23 @@ trait TraitTagDetIBSCBS
             'vTotCBSMonoItem'
         ];
         $std = $this->equilizeParameters($std, $possible);
+        $this->flagMono = true;
         //Totalizador
-        isset($std->vIBSMono) ? $this->stdIBSCBSTot->gMono->vIBSMono += $std->vIBSMono : null;
-        isset($std->vCBSMono) ? $this->stdIBSCBSTot->gMono->vCBSMono += $std->vCBSMono : null;
-        isset($std->vIBSMonoReten) ? $this->stdIBSCBSTot->gMono->vIBSMonoReten += $std->vIBSMonoReten : null;
-        isset($std->vCBSMonoReten) ? $this->stdIBSCBSTot->gMono->vCBSMonoReten += $std->vCBSMonoReten : null;
-        isset($std->vIBSMonoRet) ? $this->stdIBSCBSTot->gMono->vIBSMonoRet += $std->vIBSMonoRet : null;
-        isset($std->vCBSMonoRet) ? $this->stdIBSCBSTot->gMono->vCBSMonoRet += $std->vCBSMonoRet : null;
-
+        $this->stdIBSCBSTot->gMono->vIBSMono += $std->vIBSMono ?? 0;
+        $this->stdIBSCBSTot->gMono->vCBSMono += $std->vCBSMono ?? 0;
+        $this->stdIBSCBSTot->gMono->vIBSMonoReten += $std->vIBSMonoReten ?? 0;
+        $this->stdIBSCBSTot->gMono->vCBSMonoReten += $std->vCBSMonoReten ?? 0;
+        $this->stdIBSCBSTot->gMono->vIBSMonoRet += $std->vIBSMonoRet ?? 0;
+        $this->stdIBSCBSTot->gMono->vCBSMonoRet += $std->vCBSMonoRet ?? 0;
+        //dado para calculo do vItem
+        if (empty($this->aVItem[$std->item])) {
+            $this->aVItem[$std->item] = $this->aVItemStruct;
+        }
+        //vTotIBSMonoItem = vIBSMono + vIBSMonoReten - vIBSMonoDif
+        $vTotIBSMonoItem = ($std->vIBSMono ?? 0) + ($std->vIBSMonoReten ?? 0) - ($std->vIBSMonoDif ?? 0);
+        $vTotCBSMonoItem = ($std->vCBSMono ?? 0) + ($std->vCBSMonoReten ?? 0) - ($std->vCBSMonoDif ?? 0);
+        $this->aVItem[$std->item]['vTotIBSMonoItem'] = ($std->vTotIBSMonoItem ?? $vTotIBSMonoItem);
+        $this->aVItem[$std->item]['vTotCBSMonoItem'] = ($std->vTotCBSMonoItem ?? $vTotCBSMonoItem);
         $identificador = "UB84 gIBSCBSMono Item: $std->item -";
         $gIBSCBSMono = $this->dom->createElement("gIBSCBSMono");
         if (!empty($std->qBCMono)) {
@@ -829,14 +727,14 @@ trait TraitTagDetIBSCBS
         $this->dom->addChild(
             $gIBSCBSMono,
             "vTotIBSMonoItem",
-            $this->conditionalNumberFormatting($std->vTotIBSMonoItem ?? null),
+            $this->conditionalNumberFormatting($std->vTotIBSMonoItem ?? $vTotIBSMonoItem),
             true,
             "$identificador Total de IBS Monofásico (vTotIBSMonoItem)"
         );
         $this->dom->addChild(
             $gIBSCBSMono,
             "vTotCBSMonoItem",
-            $this->conditionalNumberFormatting($std->vTotCBSMonoItem ?? null),
+            $this->conditionalNumberFormatting($std->vTotCBSMonoItem ?? $vTotCBSMonoItem),
             true,
             "$identificador Total da CBS Monofásica (vTotCBSMonoItem)"
         );
@@ -1006,8 +904,8 @@ trait TraitTagDetIBSCBS
         $identificador = "UB116 gEstornoCred Item: $std->item -";
 
         //totalizador
-        $this->stdIBSCBSTot->gEstornoCred->vIBSEstCred += $std->vIBSEstCred;
-        $this->stdIBSCBSTot->gEstornoCred->vCBSEstCred += $std->vCBSEstCred;
+        $this->stdIBSCBSTot->gEstornoCred->vIBSEstCred += $std->vIBSEstCred ?? 0;
+        $this->stdIBSCBSTot->gEstornoCred->vCBSEstCred += $std->vCBSEstCred ?? 0;
 
         $estorno = $this->dom->createElement("gEstornoCred");
         $this->dom->addChild(
@@ -1051,6 +949,10 @@ trait TraitTagDetIBSCBS
             'cbs_vCredPresCondSus',
         ];
         $std = $this->equilizeParameters($std, $possible);
+        $this->stdIBSCBSTot->gCBS->vCredPres += ($std->cbs_vCredPres ?? 0);
+        $this->stdIBSCBSTot->gCBS->vCredPresCondSus += ($std->cbs_vCredPresCondSus ?? 0);
+        $this->stdIBSCBSTot->gIBS->vCredPres += ($std->ibs_vCredPres ?? 0);
+        $this->stdIBSCBSTot->gIBS->vCredPresCondSus += ($std->ibs_vCredPresCondSus ?? 0);
         $identificador = "UB120 gCredPresOper Item: $std->item -";
         $cred = $this->dom->createElement("gCredPresOper");
         $this->dom->addChild(
@@ -1067,7 +969,7 @@ trait TraitTagDetIBSCBS
             true,
             "$identificador Código de Classificação do Crédito Presumido (cCredPres)"
         );
-        if (isset($std->ibs_pCredPres) && isset($std->ibs_vCredPres) && isset($std->ibs_vCredPresCondSus)) {
+        if (isset($std->ibs_pCredPres) && (isset($std->ibs_vCredPres) || isset($std->ibs_vCredPresCondSus))) {
             $gibs = $this->dom->createElement("gIBSCredPres");
             $this->dom->addChild(
                 $gibs,
@@ -1076,7 +978,7 @@ trait TraitTagDetIBSCBS
                 true,
                 "$identificador Percentual do Crédito Presumido (ibs_pCredPres)"
             );
-            if (!empty($std->ibs_vCredPres)) {
+            if (isset($std->ibs_vCredPres)) {
                 $this->dom->addChild(
                     $gibs,
                     "vCredPres",
@@ -1095,7 +997,7 @@ trait TraitTagDetIBSCBS
             }
             $cred->appendChild($gibs);
         }
-        if (isset($std->cbs_pCredPres) && isset($std->cbs_vCredPres) && isset($std->cbs_vCredPresCondSus)) {
+        if (isset($std->cbs_pCredPres) && (isset($std->cbs_vCredPres) || isset($std->cbs_vCredPresCondSus))) {
             $gcbs = $this->dom->createElement("gCBSCredPres");
             $this->dom->addChild(
                 $gcbs,
@@ -1104,7 +1006,7 @@ trait TraitTagDetIBSCBS
                 true,
                 "$identificador Percentual do Crédito Presumido (cbs_pCredPres)"
             );
-            if (!empty($std->cbs_vCredPres)) {
+            if (isset($std->cbs_vCredPres)) {
                 $this->dom->addChild(
                     $gcbs,
                     "vCredPres",
