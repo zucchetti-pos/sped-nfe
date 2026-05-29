@@ -41,7 +41,7 @@ use NFePHP\NFe\Traits\TraitTagTransp;
 use stdClass;
 use DOMElement;
 
-class Make
+final class Make
 {
     use TraitTagInfNfe;
     use TraitTagIde;
@@ -80,7 +80,7 @@ class Make
     use TraitCalculations;
 
     public const METHOD_CALCULATION_V1 = 1; //by values, calculate vItem and vNFTot
-    public const METHOD_CALCULATION_V2 = 1; //by tags, calculate vItem and vNFTot
+    public const METHOD_CALCULATION_V2 = 2; //by tags, calculate vItem and vNFTot
 
     protected int $schema; //esta propriedade da classe estabelece qual é a versão do schema sendo considerado
     protected int $tpAmb = 2;
@@ -281,8 +281,8 @@ class Make
         $this->stdTot->vIBS = 0;
         $this->stdTot->vCBS = 0;
         $this->stdTot->vIS = 0;
-        $this->stdTot->vNFTot = 0;
-        $this->stdTot->vNFTotCalculated = 0;
+        $this->stdTot->vNFTot = null;
+        $this->stdTot->vNFTotCalculated = null;
         //ISSQN
         $this->stdISSQNTot = new stdClass();
         $this->stdISSQNTot->vServ = 0;
@@ -806,23 +806,25 @@ class Make
                 } else {
                     $this->calculateTtensValues2($det);
                 }
-                //adiciona o vItem informado ou o calculado
-                if (!empty($this->aVItem[$item]['vItem'])) {
-                    $this->dom->addChild(
-                        $det,
-                        "vItem",
-                        $this->conditionalNumberFormatting($this->aVItem[$item]['vItem']),
-                        true,
-                        "det nItem $item Valor Total do Item da NF-e"
-                    );
-                } else {
-                    $this->dom->addChild(
-                        $det,
-                        "vItem",
-                        $this->conditionalNumberFormatting($this->aVItem[$item]['vItemCalculated']),
-                        true,
-                        "det nItem $item Valor Total do Item da NF-e"
-                    );
+                if (!empty($this->aIBSCBS)) {
+                    //adiciona o vItem informado ou o calculado
+                    if (!empty($this->aVItem[$item]['vItem'])) {
+                        $this->dom->addChild(
+                            $det,
+                            "vItem",
+                            $this->conditionalNumberFormatting($this->aVItem[$item]['vItem']),
+                            true,
+                            "det nItem $item Valor Total do Item da NF-e"
+                        );
+                    } else {
+                        $this->dom->addChild(
+                            $det,
+                            "vItem",
+                            $this->conditionalNumberFormatting($this->aVItem[$item]['vItemCalculated']),
+                            true,
+                            "det nItem $item Valor Total do Item da NF-e"
+                        );
+                    }
                 }
                 //DFEReferenciado => det PL_010
                 if (!empty($this->aDFeReferenciado[$item])) {
@@ -1178,7 +1180,7 @@ class Make
         //Até 2036 esta tag deverá existir segundo a documentação atual da SEFAZ
         $this->addTag($total, $this->ICMSTot);
         //Grupo Totais referentes ao ISSQN
-        if (empty($this->ISSQNTot) && $this->stdISSQNTot->vServ > 0) {
+        if (empty($this->ISSQNTot) && !empty($this->aISSQN)) {
             $iss = [
                 'vServ' => null,
                 'vBC' => null,
@@ -1246,14 +1248,18 @@ class Make
                 $this->addTag($total, $this->IBSCBSTot);
                 $vNFTotRecalculated = $this->reCalculateNFTotValue();
                 //add vNFTot informado ou calculado
-                if (!empty($this->stdTot->vNFTot)) {
-                    $this->dom->addChild(
-                        $total,
-                        "vNFTot",
-                        $this->conditionalNumberFormatting($this->stdTot->vNFTot, 2),
-                        false,
-                        "$identificador Valor total da NF-e com IBS / CBS / IS"
-                    );
+                if (isset($this->stdTot->vNFTot)) {
+                    if (empty($this->stdTot->vNFTot)) {
+                        $this->errors[] = "tag total - O valor de vNFTot não pode ser ZERO.";
+                    } else {
+                        $this->dom->addChild(
+                            $total,
+                            "vNFTot",
+                            $this->conditionalNumberFormatting($this->stdTot->vNFTot, 2),
+                            false,
+                            "$identificador Valor total da NF-e com IBS / CBS / IS"
+                        );
+                    }
                 } elseif (!empty($vNFTotRecalculated)) {
                     $this->dom->addChild(
                         $total,
@@ -1262,8 +1268,6 @@ class Make
                         false,
                         "$identificador Valor total da NF-e com IBS / CBS / IS"
                     );
-                } else {
-                    $this->errors[] = "tag total - O valor de vNFTot não pode ser ZERO.";
                 }
             }
         }
@@ -1366,26 +1370,6 @@ class Make
             }
         }
         return $new;
-    }
-
-    /**
-     * Adjust the text size to the maximum acceptable size
-     * @param string|null $string
-     * @param int $max
-     * @return string|null
-     */
-    protected function adjustingStrings($string, $max = 0): ?string
-    {
-        if (is_null($string)) {
-            return null;
-        }
-        if (empty($string)) {
-            return '';
-        }
-        if ($max === 0) {
-            return $string;
-        }
-        return substr($string, 0, $max);
     }
 
     /**
