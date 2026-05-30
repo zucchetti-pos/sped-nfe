@@ -127,9 +127,6 @@ class Convert
                     throw new RuntimeException($e->getMessage());
                 }
             }
-            if (count($errors) > 0) {
-                throw new ParserException(implode(', ', $errors));
-            }
             $i++;
         }
         return $aDumps;

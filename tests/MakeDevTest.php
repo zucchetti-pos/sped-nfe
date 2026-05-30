@@ -4,20 +4,19 @@ declare(strict_types=1);
 
 namespace NFePHP\NFe\Tests;
 
-use NFePHP\NFe\Make;
+use NFePHP\NFe\MakeDev;
 use PHPUnit\Framework\TestCase;
 
 class MakeDevTest extends TestCase
 {
     /**
-     * @var Make
+     * @var MakeDev
      */
     protected $make;
 
     protected function setUp(): void
     {
-        TestCase::__construct();
-        $this->make = new Make('PL_010');
+        $this->make = new MakeDev('PL_010');
     }
 
     // =========================================================================
