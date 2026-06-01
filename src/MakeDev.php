@@ -79,9 +79,10 @@ class MakeDev
     use TraitTagCana;
     use TraitTagAgropecuario;
     use TraitTagTotal;
+    use TraitCalculations;
+
     public const IBS_CRED_PRES_SUS_BLOCKED_UNTIL = '01-01-2033';
     public const CBS_CRED_PRES_SUS_BLOCKED_UNTIL = '01-01-2027';
-    use TraitCalculations;
 
     public const METHOD_CALCULATION_V1 = 1; //by values, calculate vItem and vNFTot
     public const METHOD_CALCULATION_V2 = 1; //by tags, calculate vItem and vNFTot
@@ -283,7 +284,6 @@ class MakeDev
         $this->stdTot->vIBS = 0;
         $this->stdTot->vCBS = 0;
         $this->stdTot->vIS = 0;
-
         $this->stdTot->vNFTot = 0;
         $this->stdTot->vNFTotCalculated = 0;
         //ISSQN
@@ -777,23 +777,25 @@ class MakeDev
                 } else {
                     $this->calculateTtensValues2($det);
                 }
-                //adiciona o vItem informado ou o calculado
-                if (!empty($this->aVItem[$item]['vItem'])) {
-                    $this->dom->addChild(
-                        $det,
-                        "vItem",
-                        $this->conditionalNumberFormatting($this->aVItem[$item]['vItem']),
-                        true,
-                        "det nItem $item Valor Total do Item da NF-e"
-                    );
-                } else {
-                    $this->dom->addChild(
-                        $det,
-                        "vItem",
-                        $this->conditionalNumberFormatting($this->aVItem[$item]['vItemCalculated']),
-                        true,
-                        "det nItem $item Valor Total do Item da NF-e"
-                    );
+                if (!empty($this->aIBSCBS)) {
+                    //adiciona o vItem informado ou o calculado
+                    if (!empty($this->aVItem[$item]['vItem'])) {
+                        $this->dom->addChild(
+                            $det,
+                            "vItem",
+                            $this->conditionalNumberFormatting($this->aVItem[$item]['vItem']),
+                            true,
+                            "det nItem $item Valor Total do Item da NF-e"
+                        );
+                    } else {
+                        $this->dom->addChild(
+                            $det,
+                            "vItem",
+                            $this->conditionalNumberFormatting($this->aVItem[$item]['vItemCalculated']),
+                            true,
+                            "det nItem $item Valor Total do Item da NF-e"
+                        );
+                    }
                 }
                 //DFEReferenciado => det PL_010
                 if (!empty($this->aDFeReferenciado[$item])) {
@@ -1163,7 +1165,7 @@ class MakeDev
         $this->buildTagICMSTot((object)$icms);
         $this->addTag($total, $this->ICMSTot ?? null);
         //Grupo Totais referentes ao ISSQN
-        if (empty($this->ISSQNTot) && $this->stdISSQNTot->vServ > 0) {
+        if (empty($this->ISSQNTot) && !empty($this->aISSQN)) {
             $iss = [
                 'vServ' => null,
                 'vBC' => null,
@@ -1229,7 +1231,6 @@ class MakeDev
                 $this->addTag($total, $this->IBSCBSTot);
                 $vNFTotRecalculated = $this->reCalculateNFTotValue();
                 //add vNFTot informado ou calculado
-
                 if (!empty($this->stdTot->vNFTot)) {
                     $this->dom->addChild(
                         $total,
@@ -1353,26 +1354,6 @@ class MakeDev
     }
 
     /**
-     * Adjust the text size to the maximum acceptable size
-     * @param string|null $string
-     * @param int $max
-     * @return string|null
-     */
-    protected function adjustingStrings($string, $max = 0): ?string
-    {
-        if (is_null($string)) {
-            return null;
-        }
-        if (empty($string)) {
-            return '';
-        }
-        if ($max === 0) {
-            return $string;
-        }
-        return substr($string, 0, $max);
-    }
-
-    /**
      * Formatação numerica condicional
      * @param string|float|int|null $value
      * @param int $decimal
@@ -1384,57 +1365,5 @@ class MakeDev
             return number_format($value, $decimal, '.', '');
         }
         return null;
-    }
-
-    /**
-     * Grupo ICMSUFDest NA01 pai M01
-     * tag NFe/infNFe/det[]/imposto/ICMSUFDest (opcional)
-     * Grupo a ser informado nas vendas interestaduais para consumidor final,
-     * não contribuinte do ICMS
-     * @param stdClass $std
-     * @return DOMElement
-     * @throws \DOMException
-     */
-    public function tagCEST(stdClass $std): DOMElement
-    {
-        $possible = ['item', 'CEST', 'indEscala', 'CNPJFab'];
-        $std = $this->equilizeParameters($std, $possible);
-        $identificador = 'I05b <ctrltST> - ';
-        $ctrltST = $this->dom->createElement("ctrltST");
-        $this->dom->addChild(
-            $ctrltST,
-            "CEST",
-            Strings::onlyNumbers($std->CEST),
-            true,
-            "$identificador [item $std->item] Numero CEST"
-        );
-        //incluido no layout 4.00
-        $this->dom->addChild(
-            $ctrltST,
-            "indEscala",
-            $std->indEscala,
-            false,
-            "$identificador [item $std->item] Indicador de Produção em escala relevante"
-        );
-        //incluido no layout 4.00
-        $this->dom->addChild(
-            $ctrltST,
-            "CNPJFab",
-            Strings::onlyNumbers($std->CNPJFab),
-            false,
-            "$identificador [item $std->item] CNPJ do Fabricante da Mercadoria,"
-                . "obrigatório para produto em escala NÃO relevante."
-        );
-        $this->aCest[$std->item][] = $ctrltST;
-        return $ctrltST;
-    }
-
-    private function getNodeValue(DOMElement $node, string $name)
-    {
-        $dom = new Dom('1.0', 'utf-8');
-        $dom->loadXML("<root></root>");
-        $newnode = $dom->importNode($node, true);
-        $dom->documentElement->appendChild($newnode);
-        return $dom->getNodeValue($name);
     }
 }

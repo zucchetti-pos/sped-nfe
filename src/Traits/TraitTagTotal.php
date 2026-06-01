@@ -17,7 +17,6 @@ use DOMException;
  * @property stdclass $stdTot Totalizador
  * @property stdclass $stdISSQNTot Totalizador
  * @property stdclass $stdIBSCBSTot Totalizador
- * @property array $aItensServ
  * @property bool $flagMono
  * @method equilizeParameters($std, $possible)
  * @method conditionalNumberFormatting($value, $decimal = 2)
@@ -30,14 +29,14 @@ trait TraitTagTotal
      * Valor vNTTot
      * tag NFe/infNFe/total/vNFTot
      * @param stdClass $std
-     * @return float
+     * @return null|float
      */
-    public function tagTotal(stdClass $std): float
+    public function tagTotal(stdClass $std): ?float
     {
         $possible = ['vNFTot'];
         $std = $this->equilizeParameters($std, $possible);
         $identificador = "W01 <vNFTot> -";
-        $this->stdTot->vNFTot = ($std->vNFTot ?? 0);
+        $this->stdTot->vNFTot = $std->vNFTot ?? null;
         return $this->stdTot->vNFTot;
     }
 
@@ -397,11 +396,6 @@ trait TraitTagTotal
      */
     public function tagISSQNTot(?stdClass $std = null)
     {
-        if (empty($this->aItensServ)) {
-            return null;
-        }
-
-        $this->buildISSQNTot();
         $possible = [
             'vServ',
             'vBC',
@@ -896,41 +890,5 @@ trait TraitTagTotal
         );
         $this->retTrib = $retTrib;
         return $retTrib;
-    }
-
-    protected function buildISSQNTot()
-    {
-        if ($this->flagISSQNCalc) {
-            return;
-        }
-
-        //totaliza PIS e COFINS dos Itens de Serviço
-        foreach ($this->aItensServ as $item) {
-            if (!empty($this->aPIS[$item])) {
-                $vPIS = (float) $this->getNodeValue($this->aPIS[$item], 'vPIS');
-                $this->stdISSQNTot->vPIS += (float) $vPIS;
-                //remove esse valor do total já contabiizado no stdTot
-                $this->stdTot->vPIS -= $vPIS;
-            }
-            //totalizar COFINS desses itens
-            if (!empty($this->aCOFINS[$item])) {
-                $vCOFINS = (float) $this->getNodeValue($this->aCOFINS[$item], 'vCOFINS');
-                $this->stdISSQNTot->vCOFINS += (float) $vCOFINS;
-                //remove esse valor do total já contabiizado no stdTot
-                $this->stdTot->vCOFINS -= $vCOFINS;
-            }
-        }
-        $this->stdISSQNTot->vServ = $this->conditionalNumberFormatting($this->stdISSQNTot->vServ);
-        $this->stdISSQNTot->vBC = $this->conditionalNumberFormatting($this->stdISSQNTot->vBC);
-        $this->stdISSQNTot->vISS = $this->conditionalNumberFormatting($this->stdISSQNTot->vISS);
-        $this->stdISSQNTot->vPIS = $this->conditionalNumberFormatting($this->stdISSQNTot->vPIS);
-        $this->stdISSQNTot->vCOFINS = $this->conditionalNumberFormatting($this->stdISSQNTot->vCOFINS);
-        $this->stdISSQNTot->vDeducao = $this->conditionalNumberFormatting($this->stdISSQNTot->vDeducao);
-        $this->stdISSQNTot->vOutro = $this->conditionalNumberFormatting($this->stdISSQNTot->vOutro);
-        $this->stdISSQNTot->vDescIncond = $this->conditionalNumberFormatting($this->stdISSQNTot->vDescIncond);
-        $this->stdISSQNTot->vDescCond = $this->conditionalNumberFormatting($this->stdISSQNTot->vDescCond);
-        $this->stdISSQNTot->vISSRet = $this->conditionalNumberFormatting($this->stdISSQNTot->vISSRet);
-
-        $this->flagISSQNCalc = true;
     }
 }
