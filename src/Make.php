@@ -41,7 +41,7 @@ use NFePHP\NFe\Traits\TraitTagTransp;
 use stdClass;
 use DOMElement;
 
-final class Make
+class Make
 {
     use TraitTagInfNfe;
     use TraitTagIde;
@@ -881,7 +881,7 @@ final class Make
             + $this->stdISSQNTot->vServ
             + $this->stdTot->vPISST
             + $this->stdTot->vCOFINSST;
-            /*
+        /*
             - $this->stdTot->vRetPIS //subtrai as retenções
             - $this->stdTot->vRetCOFINS  //subtrai as retenções
             - $this->stdTot->vRetCSLL //subtrai as retenções
