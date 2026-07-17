@@ -111,14 +111,15 @@ trait TraitTagEmit
             $identificador . "Código de Regime Tributário do emitente"
         );
         //@todo NT 2005.002 v1.50 esperar liberar no xsd
-        /*
-        $this->dom->addChild(
-            $this->emit,
-            "ISUFEmit",
-            $std->ISUFEmit,
-            false,
-            $identificador . "Inscrição do emitente da Suframa"
-        );*/
+        if (!empty($this->ISUFEmit)) {
+            $this->dom->addChild(
+                $this->emit,
+                "ISUFEmit",
+                $std->ISUFEmit,
+                false,
+                $identificador . "Inscrição do emitente da Suframa"
+            );
+        }
         return $this->emit;
     }
 
