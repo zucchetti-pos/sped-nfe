@@ -207,8 +207,7 @@ trait TraitTagDetICMS
                 $this->stdTot->vFCP += (float) !empty($std->vFCP) ? $std->vFCP : 0;
                 //dados calculo vItem
                 $this->aVItem[$std->item]['vFCPST'] = ($std->vFCPST ?? 0);
-                $this->aVItem[$std->item]['vICMSST'] = ($std->vICMSST ?? 0);
-                ;
+                $this->aVItem[$std->item]['vICMSST'] = ($std->vICMSST ?? 0);;
                 $icms = $this->dom->createElement("ICMS10");
                 $this->dom->addChild(
                     $icms,
@@ -548,8 +547,7 @@ trait TraitTagDetICMS
                 $this->aVItem[$std->item]['indDeduzDeson'] = ($std->indDeduzDeson ?? 0);
                 $this->aVItem[$std->item]['vICMSDeson'] = ($std->vICMSDeson ?? 0);
                 $this->aVItem[$std->item]['vFCPST'] = ($std->vFCPST ?? 0);
-                $this->aVItem[$std->item]['vICMSST'] = ($std->vICMSST ?? 0);
-                ;
+                $this->aVItem[$std->item]['vICMSST'] = ($std->vICMSST ?? 0);;
                 $icms = $this->dom->createElement("ICMS30");
                 $this->dom->addChild(
                     $icms,
@@ -1048,8 +1046,7 @@ trait TraitTagDetICMS
                 $this->aVItem[$std->item]['indDeduzDeson'] = ($std->indDeduzDeson ?? 0);
                 $this->aVItem[$std->item]['vICMSDeson'] = ($std->vICMSDeson ?? 0);
                 $this->aVItem[$std->item]['vFCPST'] = ($std->vFCPST ?? 0);
-                $this->aVItem[$std->item]['vICMSST'] = ($std->vICMSST ?? 0);
-                ;
+                $this->aVItem[$std->item]['vICMSST'] = ($std->vICMSST ?? 0);;
                 $icms = $this->dom->createElement("ICMS70");
                 $this->dom->addChild(
                     $icms,
@@ -1236,8 +1233,7 @@ trait TraitTagDetICMS
                 $this->aVItem[$std->item]['indDeduzDeson'] = ($std->indDeduzDeson ?? 0);
                 $this->aVItem[$std->item]['vICMSDeson'] = ($std->vICMSDeson ?? 0);
                 $this->aVItem[$std->item]['vFCPST'] = ($std->vFCPST ?? 0);
-                $this->aVItem[$std->item]['vICMSST'] = ($std->vICMSST ?? 0);
-                ;
+                $this->aVItem[$std->item]['vICMSST'] = ($std->vICMSST ?? 0);;
                 $icms = $this->dom->createElement("ICMS90");
                 $this->dom->addChild(
                     $icms,
@@ -1320,27 +1316,6 @@ trait TraitTagDetICMS
                     "$identificador Valor do ICMS diferido"
                 );
                 //fim grupo adicional
-                $this->dom->addChild(
-                    $icms,
-                    'vICMSOp',
-                    $this->conditionalNumberFormatting($std->vICMSOp),
-                    false,
-                    "$identificador Valor do ICMS da Operação"
-                );
-                $this->dom->addChild(
-                    $icms,
-                    'pDif',
-                    $this->conditionalNumberFormatting($std->pDif ?? null, 4),
-                    false,
-                    "$identificador Percentual do diferimento"
-                );
-                $this->dom->addChild(
-                    $icms,
-                    'vICMSDif',
-                    $this->conditionalNumberFormatting($std->vICMSDif ?? null),
-                    false,
-                    "$identificador Valor do ICMS diferido"
-                );
                 $this->dom->addChild(
                     $icms,
                     'vICMS',
