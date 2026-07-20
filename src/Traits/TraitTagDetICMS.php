@@ -1322,27 +1322,6 @@ trait TraitTagDetICMS
                 //fim grupo adicional
                 $this->dom->addChild(
                     $icms,
-                    'vICMSOp',
-                    $this->conditionalNumberFormatting($std->vICMSOp),
-                    false,
-                    "$identificador Valor do ICMS da Operação"
-                );
-                $this->dom->addChild(
-                    $icms,
-                    'pDif',
-                    $this->conditionalNumberFormatting($std->pDif ?? null, 4),
-                    false,
-                    "$identificador Percentual do diferimento"
-                );
-                $this->dom->addChild(
-                    $icms,
-                    'vICMSDif',
-                    $this->conditionalNumberFormatting($std->vICMSDif ?? null),
-                    false,
-                    "$identificador Valor do ICMS diferido"
-                );
-                $this->dom->addChild(
-                    $icms,
                     'vICMS',
                     $this->conditionalNumberFormatting($std->vICMS),
                     false,
