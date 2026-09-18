@@ -99,8 +99,8 @@ trait TraitTagDetIBSCBS
             $this->aVItem[$std->item] = $this->aVItemStruct;
         }
 
-        //vIBS = vIBSUF + vIBSMun
-        $vIBSItem = ($std->gIBSUF_vIBSUF ?? 0) + ($std->gIBSMun_vIBSMun ?? 0);
+        //vIBS = usa o valor do gIBS_vIBS que já desconta o valor credito presumido, se não vIBSUF + vIBSMun
+        $vIBSItem = $std->gIBS_vIBS ?? ($std->gIBSUF_vIBSUF ?? 0) + ($std->gIBSMun_vIBSMun ?? 0);
         $this->aVItem[$std->item]['vIBS'] = $vIBSItem;
         $this->aVItem[$std->item]['vCBS'] = ($std->vCBS ?? 0);
         //totalizador do IBS e CBS
