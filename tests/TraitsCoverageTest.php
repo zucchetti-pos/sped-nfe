@@ -275,7 +275,7 @@ class TraitsCoverageTest extends TestCase
         $std->cClassTribIS = '001';
         $std->vBCIS = 100.00;
         $std->pIS = 5.0000;
-        $std->pISEspec = 1.5000;
+        $std->adRemIS = 1.5000;
         $std->vIS = 5.00;
         $is = $this->make->tagIS($std);
 
@@ -285,7 +285,7 @@ class TraitsCoverageTest extends TestCase
         $this->assertEquals('001', $is->getElementsByTagName('cClassTribIS')->item(0)->nodeValue);
         $this->assertEquals('100.00', $is->getElementsByTagName('vBCIS')->item(0)->nodeValue);
         $this->assertEquals('5.0000', $is->getElementsByTagName('pIS')->item(0)->nodeValue);
-        $this->assertEquals('1.5000', $is->getElementsByTagName('pISEspec')->item(0)->nodeValue);
+        $this->assertEquals('1.5000', $is->getElementsByTagName('adRemIS')->item(0)->nodeValue);
         $this->assertEquals('5.00', $is->getElementsByTagName('vIS')->item(0)->nodeValue);
     }
 
@@ -698,15 +698,13 @@ class TraitsCoverageTest extends TestCase
         $make = new Make('PL_010_V1.30');
         $this->setupBaseTags($make);
 
-        $std = new stdClass();
-        $std->refNFe = [
-            '35170358716523000119550010000000301000000300',
-            '35170358716523000119550010000000301000000301',
+        $std = [
+            'refNFe' => '34567890123456789012345678901234567890123456'
         ];
-        $gc = $make->taggPagAntecipado($std);
+        $gc = $make->taggPagAntecipado((object) $std);
 
         $this->assertInstanceOf(\DOMElement::class, $gc);
-        $this->assertEquals(2, $gc->getElementsByTagName('refNFe')->length);
+        $this->assertEquals(1, $gc->getElementsByTagName('refNFe')->length);
     }
 
     // ──────────────────────────────────────────────────────────────────────
@@ -1102,13 +1100,12 @@ class TraitsCoverageTest extends TestCase
         $itens[] = (object) [
             'item' => 1,
             'vBC' => 100.00,
+            'cCredPres' => '01',
             'gIBS' => (object) [
-                'cCredPres' => '01',
                 'pCredPres' => 2.5000,
                 'vCredPres' => 2.50,
             ],
             'gCBS' => (object) [
-                'cCredPres' => '01',
                 'pCredPres' => 3.5000,
                 'vCredPres' => 3.50,
             ],
@@ -1116,16 +1113,17 @@ class TraitsCoverageTest extends TestCase
 
         $std = new stdClass();
         $std->chNFe = $this->makeChaveNFe55();
+        $std->tpAutor = 2;
         $std->nSeqEvento = 1;
         $std->itens = $itens;
         $tools->sefazSolApropCredPresumido($std);
         $request = $tools->getRequest();
 
         $this->assertStringContainsString('<tpEvento>211110</tpEvento>', $request);
-        $this->assertStringContainsString('<gCredPres nItem="1">', $request);
-        $this->assertStringContainsString('<gIBS>', $request);
-        $this->assertStringContainsString('<gCBS>', $request);
-        $this->assertStringContainsString('<vBC>100.00</vBC>', $request);
+        $this->assertStringContainsString('<gCredPresOper nItem="1">', $request);
+        $this->assertStringContainsString('<gIBSCredPres>', $request);
+        $this->assertStringContainsString('<gCBSCredPres>', $request);
+        $this->assertStringContainsString('<vBCCredPres>100.00</vBCCredPres>', $request);
     }
 
     public function test_sefazSolApropCredPresumido_without_gIBS_gCBS(): void
@@ -1136,18 +1134,21 @@ class TraitsCoverageTest extends TestCase
         $itens[] = (object) [
             'item' => 1,
             'vBC' => 200.00,
+            'cCredPres' => '01',
         ];
 
         $std = new stdClass();
         $std->chNFe = $this->makeChaveNFe55();
+        $std->tpAutor = 2;
         $std->nSeqEvento = 1;
         $std->itens = $itens;
         $tools->sefazSolApropCredPresumido($std);
         $request = $tools->getRequest();
 
         $this->assertStringContainsString('<tpEvento>211110</tpEvento>', $request);
-        $this->assertStringNotContainsString('<gIBS>', $request);
-        $this->assertStringNotContainsString('<gCBS>', $request);
+        $this->assertStringContainsString('<gCredPresOper nItem="1">', $request);
+        $this->assertStringNotContainsString('<gIBSCredPres>', $request);
+        $this->assertStringNotContainsString('<gCBSCredPres>', $request);
     }
 
     public function test_sefazDestinoConsumoPessoal(): void
