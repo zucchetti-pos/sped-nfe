@@ -107,8 +107,8 @@ trait TraitEventsRTC
                     . "</gIBSCredPres>";
                 $gcred .= $gibs;
             }
-            if (!empty($item->gCBS)) {
-                $g = $item->gCBS;
+            if (!empty($item->gCBSCredPres)) {
+                $g = $item->gCBSCredPres;
                 $pc = number_format($g->pCredPres, 4, '.', '');
                 $vc = number_format($g->vCredPres, 2, '.', '');
                 $gcbs = "<gCBSCredPres>"
