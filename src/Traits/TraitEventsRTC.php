@@ -90,14 +90,15 @@ trait TraitEventsRTC
         $verAplic = $this->resolveVerAplic($verAplic);
         $tpEvento = '211110';
         $tagAdic = "<cOrgaoAutor>{$this->cUF}</cOrgaoAutor>"
-            . "<tpAutor>2</tpAutor>" //2=Empresa destinatária     @todo quem realmente emite esse evento ??
+            . "<tpAutor>{$std->tpAutor}</tpAutor>"
             . "<verAplic>{$verAplic}</verAplic>";
         $gcred = '';
         foreach ($std->itens as $item) {
-            $bc = number_format($item->vBCCredPres, 2, '.', '');
-            $gcred .= "<gCredPresOper nItem=\"{$item->item}\"><vBCCredPres>{$bc}</vBCCredPres><cCredPres>{$item->cCredPres}</cCredPres>";
-            if (!empty($item->gIBSCredPres)) {
-                $g = $item->gIBSCredPres;
+            $bc = number_format($item->vBC, 2, '.', '');
+            $gcred .= "<gCredPresOper nItem=\"{$item->item}\"><vBCCredPres>{$bc}</vBCCredPres>";
+            $gcred .= "<cCredPres>{$item->cCredPres}</cCredPres>";
+            if (!empty($item->gIBS)) {
+                $g = $item->gIBS;
                 $pc = number_format($g->pCredPres, 4, '.', '');
                 $vc = number_format($g->vCredPres, 2, '.', '');
                 $gibs = "<gIBSCredPres>"

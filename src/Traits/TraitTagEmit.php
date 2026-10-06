@@ -77,7 +77,7 @@ trait TraitTagEmit
             $this->emit,
             "IE",
             $std->IE,
-            true,
+            false,
             $identificador . "Inscrição Estadual do emitente"
         );
         $this->dom->addChild(
@@ -110,7 +110,6 @@ trait TraitTagEmit
             true,
             $identificador . "Código de Regime Tributário do emitente"
         );
-        //@todo NT 2005.002 v1.50 esperar liberar no xsd
         if (!empty($std->ISUFEmit)) {
             $this->dom->addChild(
                 $this->emit,
