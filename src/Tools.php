@@ -403,11 +403,7 @@ class Tools extends ToolsCommon
         $consulta = "<distDFeInt xmlns=\"$this->urlPortal\" versao=\"$this->urlVersion\">"
             . "<tpAmb>" . $this->tpAmb . "</tpAmb>"
             . "<cUFAutor>$cUF</cUFAutor>";
-        if ($this->typePerson === 'J' || empty($this->typePerson)) {
-            $consulta .= "<CNPJ>$cnpj</CNPJ>";
-        } else {
-            $consulta .= "<CPF>$cnpj</CPF>";
-        }
+        $consulta .= $this->getAuthorTag($cnpj);
         $consulta .= "$tag"
             . "</distDFeInt>";
         //valida o xml da requisição
@@ -948,11 +944,7 @@ class Tools extends ToolsCommon
                 . "<infEvento Id=\"$eventId\">"
                 . "<cOrgao>$cOrgao</cOrgao>"
                 . "<tpAmb>$this->tpAmb</tpAmb>";
-            if ($this->typePerson === 'J') {
-                $request .= "<CNPJ>$cnpj</CNPJ>";
-            } else {
-                $request .= "<CPF>$cnpj</CPF>";
-            }
+            $request .= $this->getAuthorTag($cnpj);
             $request .= "<chNFe>$evt->chave</chNFe>"
                 . "<dhEvento>$dhEventoString</dhEvento>"
                 . "<tpEvento>$evt->tpEvento</tpEvento>"
@@ -1208,11 +1200,7 @@ class Tools extends ToolsCommon
             . "<infEvento Id=\"$eventId\">"
             . "<cOrgao>$cOrgao</cOrgao>"
             . "<tpAmb>$this->tpAmb</tpAmb>";
-        if ($this->typePerson === 'J') {
-            $request .= "<CNPJ>$cnpj</CNPJ>";
-        } else {
-            $request .= "<CPF>$cnpj</CPF>";
-        }
+        $request .= $this->getAuthorTag($cnpj);
         $request .= "<chNFe>$chave</chNFe>"
             . "<dhEvento>$dhEventoString</dhEvento>"
             . "<tpEvento>$tpEvento</tpEvento>"
@@ -1278,11 +1266,7 @@ class Tools extends ToolsCommon
         $request = "<distDFeInt xmlns=\"$this->urlPortal\" versao=\"$this->urlVersion\">"
             . "<tpAmb>" . $this->tpAmb . "</tpAmb>"
             . "<cUFAutor>$cUF</cUFAutor>";
-        if ($this->typePerson === 'J') {
-            $request .= "<CNPJ>$cnpj</CNPJ>";
-        } else {
-            $request .= "<CPF>$cnpj</CPF>";
-        }
+        $request .= $this->getAuthorTag($cnpj);
         $request .= "$tagChave"
             . "</distDFeInt>";
         //valida o xml da requisição
@@ -1656,5 +1640,17 @@ class Tools extends ToolsCommon
             );
         }
         return $dom->saveXML($node);
+    }
+
+    /**
+     * Returns the CNPJ or CPF tag by the length of the document, since the
+     * certificate type may differ from the issuer (e.g. e-CNPJ for a CPF producer)
+     * @param string $document
+     * @return string
+     */
+    protected function getAuthorTag(string $document): string
+    {
+        $tag = strlen($document) === 11 ? 'CPF' : 'CNPJ';
+        return "<$tag>$document</$tag>";
     }
 }

@@ -470,6 +470,22 @@ class ToolsTest extends NFeTestCase
         $this->assertSame($esperado, $request);
     }
 
+    public function test_sefazCancela_emitente_cpf_com_certificado_cnpj(): void
+    {
+        $config = json_decode($this->configJson);
+        $config->cnpj = '27309329848';
+        $config->siglaUF = 'GO';
+        $tools = new ToolsFake(
+            json_encode($config),
+            Certificate::readPfx($this->contentpfx, $this->passwordpfx)
+        );
+        $chNFe = '52261000027309329848559200000000771768693510';
+        $tools->sefazCancela($chNFe, 'Preenchimento incorreto dos dados', '123456789101234');
+        $request = $tools->getRequest();
+        $this->assertStringContainsString('<CPF>27309329848</CPF>', $request);
+        $this->assertStringNotContainsString('<CNPJ>27309329848</CNPJ>', $request);
+    }
+
     public function test_sefazCancelaPorSubstituicaoErroChave(): void
     {
         $msg = 'Cancelamento pro Substituição deve ser usado apenas para operações com modelo 65 NFCe';
