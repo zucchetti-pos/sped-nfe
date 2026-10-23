@@ -1623,12 +1623,6 @@ class Tools extends ToolsCommon
         return $dom->saveXML($node);
     }
 
-    /**
-     * Returns the CNPJ or CPF tag by the length of the document, since the
-     * certificate type may differ from the issuer (e.g. e-CNPJ for a CPF producer)
-     * @param string $document
-     * @return string
-     */
     protected function getAuthorTag(string $document): string
     {
         $tag = strlen($document) === 11 ? 'CPF' : 'CNPJ';
