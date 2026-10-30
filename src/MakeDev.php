@@ -166,6 +166,7 @@ class MakeDev
     protected array $aICMS = [];
     protected array $aICMSPart = [];
     protected array $aICMSUFDest = [];
+    protected array $aICMSPgtoAnt = [];
     protected array $aICMSSN = [];
     protected array $aICMSST = [];
     protected array $aIPI = [];
@@ -189,6 +190,7 @@ class MakeDev
     protected array $aVItem = [];
     protected array $aVItemStruct = [];
     protected array $aDetPag = [];
+    protected array $aPgtoVinc = [];
     protected array $aObsCont = [];
     protected array $aObsFisco = [];
     protected array $aProcRef = [];
@@ -220,6 +222,7 @@ class MakeDev
         $this->aVItemStruct = [
             'indTot' => 0,
             'vProd' => 0,
+            'vProdLiq' => 0,
             'vDesc' => 0,
             'vICMSST' => 0,
             'vICMSMonoReten' => 0,
@@ -267,6 +270,7 @@ class MakeDev
         $this->stdTot->qBCMonoRet = 0;
         $this->stdTot->vICMSMonoRet = 0;
         $this->stdTot->vProd = 0;
+        $this->stdTot->vProdLiq = 0;
         $this->stdTot->vFrete = 0;
         $this->stdTot->vSeg = 0;
         $this->stdTot->vDesc = 0;
@@ -480,6 +484,14 @@ class MakeDev
             $this->addTagPag();
             //tag infIntermed => tag infNFe
             $this->addTag($this->infNFe, $this->infIntermed ?? null, 'Falta a tag "infNFe"');
+            //tag YC01 gPgtoVinc => tag infNFe
+            if (!empty($this->aPgtoVinc)) {
+                $gPgtoVinc = $this->dom->createElement("gPgtoVinc");
+                foreach ($this->aPgtoVinc as $pgto) {
+                    $this->addTag($gPgtoVinc, $pgto, 'Falta a tag "gPgtoVinc"');
+                }
+                $this->addTag($this->infNFe, $gPgtoVinc ?? null, 'Falta a tag "infNFe"');
+            }
             //tag infAdic => tag infNFe
             $this->buildInfoTags();
             $this->addTag($this->infNFe, $this->infAdic ?? null, 'Falta a tag "infNFe"');
@@ -726,6 +738,10 @@ class MakeDev
             } elseif (!empty($this->aICMSSN[$item])) {
                 $flagICMS = true;
                 $this->addTag($icms, $this->aICMSSN[$item]);
+            } elseif (!empty($this->aICMSPgtoAnt[$item])) {
+                //ICMSPrevistoPagtoAntecip é uma das opções do choice de ICMS (NT 2026.008)
+                $flagICMS = true;
+                $this->addTag($icms, $this->aICMSPgtoAnt[$item]);
             }
             if ($flagICMS) {
                 $this->addTag($imposto, $icms, 'Falta a tag det/imposto!');
@@ -1205,6 +1221,15 @@ class MakeDev
     {
         $identificador = 'W01 <total> -';
         $total = $this->dom->createElement('total');
+        if (!empty($this->stdTot->vProdLiq)) {
+            $this->dom->addChild(
+                $total,
+                "vProdLiqTot",
+                $this->conditionalNumberFormatting($this->stdTot->vProdLiq),
+                true,
+                "W01a vProdLiqTot - Valor Total Líquido dos Produtos ou Serviços (sem tributos)"
+            );
+        }
         //Grupo Totais referentes ao ICMS
         if (empty($this->dataICMSTot)) {
             $icms = [
@@ -1214,6 +1239,7 @@ class MakeDev
                 'vBCST' => null,
                 'vST' => null,
                 'vProd' => null,
+                'vProdLiq' => null,
                 'vFrete' => null,
                 'vSeg' => null,
                 'vDesc' => null,

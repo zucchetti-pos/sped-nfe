@@ -14,6 +14,7 @@ use DOMException;
  * @property array $aICMSPart
  * @property array $aICMSST
  * @property array $aICMSUFDest
+ * @property array $aICMSPgtoAnt
  * @property int $indDeduzDeson
  * @method equilizeParameters($std, $possible)
  * @method conditionalNumberFormatting($value, $decimal = 2)
@@ -207,8 +208,7 @@ trait TraitTagDetICMS
                 $this->stdTot->vFCP += (float) !empty($std->vFCP) ? $std->vFCP : 0;
                 //dados calculo vItem
                 $this->aVItem[$std->item]['vFCPST'] = ($std->vFCPST ?? 0);
-                $this->aVItem[$std->item]['vICMSST'] = ($std->vICMSST ?? 0);
-                ;
+                $this->aVItem[$std->item]['vICMSST'] = ($std->vICMSST ?? 0);;
                 $icms = $this->dom->createElement("ICMS10");
                 $this->dom->addChild(
                     $icms,
@@ -548,8 +548,7 @@ trait TraitTagDetICMS
                 $this->aVItem[$std->item]['indDeduzDeson'] = ($std->indDeduzDeson ?? 0);
                 $this->aVItem[$std->item]['vICMSDeson'] = ($std->vICMSDeson ?? 0);
                 $this->aVItem[$std->item]['vFCPST'] = ($std->vFCPST ?? 0);
-                $this->aVItem[$std->item]['vICMSST'] = ($std->vICMSST ?? 0);
-                ;
+                $this->aVItem[$std->item]['vICMSST'] = ($std->vICMSST ?? 0);;
                 $icms = $this->dom->createElement("ICMS30");
                 $this->dom->addChild(
                     $icms,
@@ -1048,8 +1047,7 @@ trait TraitTagDetICMS
                 $this->aVItem[$std->item]['indDeduzDeson'] = ($std->indDeduzDeson ?? 0);
                 $this->aVItem[$std->item]['vICMSDeson'] = ($std->vICMSDeson ?? 0);
                 $this->aVItem[$std->item]['vFCPST'] = ($std->vFCPST ?? 0);
-                $this->aVItem[$std->item]['vICMSST'] = ($std->vICMSST ?? 0);
-                ;
+                $this->aVItem[$std->item]['vICMSST'] = ($std->vICMSST ?? 0);;
                 $icms = $this->dom->createElement("ICMS70");
                 $this->dom->addChild(
                     $icms,
@@ -1236,8 +1234,7 @@ trait TraitTagDetICMS
                 $this->aVItem[$std->item]['indDeduzDeson'] = ($std->indDeduzDeson ?? 0);
                 $this->aVItem[$std->item]['vICMSDeson'] = ($std->vICMSDeson ?? 0);
                 $this->aVItem[$std->item]['vFCPST'] = ($std->vFCPST ?? 0);
-                $this->aVItem[$std->item]['vICMSST'] = ($std->vICMSST ?? 0);
-                ;
+                $this->aVItem[$std->item]['vICMSST'] = ($std->vICMSST ?? 0);;
                 $icms = $this->dom->createElement("ICMS90");
                 $this->dom->addChild(
                     $icms,
@@ -2460,5 +2457,36 @@ trait TraitTagDetICMS
         );
         $this->aICMSUFDest[$std->item] = $icmsUFDest;
         return $icmsUFDest;
+    }
+
+    /**
+     * Grupo ICMSUFDest NB01 pai M01
+     * tag NFe/infNFe/det[]/imposto/ICMSPrevistoPagtoAntecip (opcional)
+     * Grupo utilizado exclusivamente em cenários específicos de pagamento antecipado para auxiliar na correta
+     * tributação do IBS e da CBS:
+     *   - tpNFDebito = 06-Pagamento antecipado;
+     *   - tpOperGov = 4-Recebimento do pagamento com fornecimento posterior
+     * @param stdClass $std
+     * @return DOMElement
+     * @throws DOMException
+     */
+    public function tagICMSPrevistoAntecipado(stdClass $std): DOMElement
+    {
+        $possible = [
+            'item',
+            'vICMSPrevisto'
+        ];
+        $std = $this->equilizeParameters($std, $possible);
+        $identificador = "NB01 ICMSPrevistoPagtoAntecip Item: $std->item -";
+        $icmspa = $this->dom->createElement('ICMSPrevistoPagtoAntecip');
+        $this->dom->addChild(
+            $icmspa,
+            "vICMSPrevisto",
+            $this->conditionalNumberFormatting(($std->vICMSPrevisto ?? 0)),
+            true,
+            "$identificador Valor do ICMS Previsto, apenas caso tpNFDebito = 6 e tpOperGov = 4"
+        );
+        $this->aICMSPgtoAnt[$std->item] = $icmspa;
+        return $icmspa;
     }
 }
