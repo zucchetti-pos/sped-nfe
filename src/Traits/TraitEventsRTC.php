@@ -223,7 +223,7 @@ trait TraitEventsRTC
                 . "</gControleEstoque>"
                 . "<DFeReferenciado>"
                 . "<chaveAcesso>{$item->chave}</chaveAcesso>"
-                . "<nItemDFeRef>{$item->nItem}</nItemDFeRef>"
+                . "<nItem>{$item->nItem}</nItem>"
                 . "</DFeReferenciado>"
                 . "</gConsumo>";
             $tagAdic .= $gc;
