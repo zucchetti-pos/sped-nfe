@@ -1180,6 +1180,7 @@ class TraitsCoverageTest extends TestCase
         $this->assertStringContainsString('<qConsumo>', $request);
         $this->assertStringContainsString('<uConsumo>PC</uConsumo>', $request);
         $this->assertStringContainsString('<DFeReferenciado>', $request);
+        $this->assertStringContainsString('<nItemDFeRef>1</nItemDFeRef>', $request);
     }
 
     public function test_sefazAceiteDebito(): void
