@@ -33,10 +33,13 @@ trait TraitTagTotal
      */
     public function tagTotal(stdClass $std): ?float
     {
-        $possible = ['vNFTot'];
+        $possible = ['vNFTot', 'vProdLiqTot'];
         $std = $this->equilizeParameters($std, $possible);
         $identificador = "W01 <vNFTot> -";
-        $this->stdTot->vNFTot = $std->vNFTot ?? null;
+        if (!empty($std->vProdLiqTot)) {
+            $this->stdTot->vProdLiq = $std->vProdLiqTot;
+        }
+        $this->stdTot->vNFTot = ($std->vNFTot ?? null);
         return $this->stdTot->vNFTot;
     }
 

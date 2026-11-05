@@ -39,6 +39,7 @@ use NFePHP\NFe\Traits\TraitTagRetirada;
 use NFePHP\NFe\Traits\TraitTagTotal;
 use NFePHP\NFe\Traits\TraitTagTransp;
 use NFePHP\NFe\Traits\TraitTagGALCZFMCBS;
+use NFePHP\NFe\Traits\TraitTagPgtoVinc;
 use stdClass;
 use DOMElement;
 
@@ -80,6 +81,7 @@ class MakeDev
     use TraitTagTotal;
     use TraitCalculations;
     use TraitTagGALCZFMCBS;
+    use TraitTagPgtoVinc;
 
     public const IBS_CRED_PRES_SUS_BLOCKED_UNTIL = '01-01-2033';
     public const CBS_CRED_PRES_SUS_BLOCKED_UNTIL = '01-01-2027';
@@ -739,7 +741,6 @@ class MakeDev
                 $flagICMS = true;
                 $this->addTag($icms, $this->aICMSSN[$item]);
             } elseif (!empty($this->aICMSPgtoAnt[$item])) {
-                //ICMSPrevistoPagtoAntecip é uma das opções do choice de ICMS (NT 2026.008)
                 $flagICMS = true;
                 $this->addTag($icms, $this->aICMSPgtoAnt[$item]);
             }
