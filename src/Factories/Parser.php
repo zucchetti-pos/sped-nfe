@@ -120,6 +120,10 @@ class Parser
      */
     protected $stdTransporta;
     /**
+     * @var stdClass|null
+     */
+    protected $stdAuxiliar;
+    /**
      * @var string
      */
     protected $baselayout;

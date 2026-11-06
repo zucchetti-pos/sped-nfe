@@ -148,8 +148,8 @@ trait TraitEventsRTC
                     . "</gIBSCredPres>";
                 $gcred .= $gibs;
             }
-            if (!empty($item->gCBS)) {
-                $g = $item->gCBS;
+            if (!empty($item->gCBSCredPres)) {
+                $g = $item->gCBSCredPres;
                 $pc = number_format($g->pCredPres, 4, '.', '');
                 $vc = number_format($g->vCredPres, 2, '.', '');
                 $gcbs = "<gCBSCredPres>"
@@ -511,6 +511,66 @@ trait TraitEventsRTC
             . "<tpAutor>8</tpAutor>" //8= Empresa sucessora
             . "<verAplic>{$verAplic}</verAplic>"
             . "<indAceitacao>{$std->indAceitacao}</indAceitacao>";
+        return $this->sefazEvento(
+            'SVRS',
+            $std->chNFe,
+            $tpEvento,
+            $std->nSeqEvento ?? 1,
+            $tagAdic,
+            null,
+            null
+        );
+    }
+
+    /**
+     * Evento: Manifestação do Fisco sobre Pedido de Transferência de Crédito de IBS em Operação de Sucessão
+     * Modelo: NF-e modelo 55, Autor do Evento: Fisco, Código do Tipo de Evento: 412120
+     *
+     * @param stdClass $std
+     * @param string|null $verAplic
+     * @return string
+     */
+    public function sefazManifestacaoFiscoTransfCredIBS(stdClass $std, ?string $verAplic = null): string
+    {
+        $this->checkModel($std);
+        $verAplic = $this->resolveVerAplic($verAplic);
+        $tpEvento = '412120';
+        $tagAdic = "<cOrgaoAutor>{$this->cUF}</cOrgaoAutor>"
+            . "<tpAutor>5</tpAutor>"
+            . "<verAplic>{$verAplic}</verAplic>"
+            . "<indDeferimento>{$std->indDeferimento}</indDeferimento>"
+            . "<cMotivo>{$std->cMotivo}</cMotivo>"
+            . "<xMotivo>{$std->xMotivo}</xMotivo>";
+        return $this->sefazEvento(
+            'SVRS',
+            $std->chNFe,
+            $tpEvento,
+            $std->nSeqEvento ?? 1,
+            $tagAdic,
+            null,
+            null
+        );
+    }
+
+    /**
+     * Evento: Manifestação do Fisco sobre Pedido de Transferência de Crédito de CBS em Operação de Sucessão
+     * Modelo: NF-e modelo 55, Autor do Evento: Fisco, Código do Tipo de Evento: 412130
+     *
+     * @param stdClass $std
+     * @param string|null $verAplic
+     * @return string
+     */
+    public function sefazManifestacaoFiscoTransfCredCBS(stdClass $std, ?string $verAplic = null): string
+    {
+        $this->checkModel($std);
+        $verAplic = $this->resolveVerAplic($verAplic);
+        $tpEvento = '412130';
+        $tagAdic = "<cOrgaoAutor>{$this->cUF}</cOrgaoAutor>"
+            . "<tpAutor>5</tpAutor>"
+            . "<verAplic>{$verAplic}</verAplic>"
+            . "<indDeferimento>{$std->indDeferimento}</indDeferimento>"
+            . "<cMotivo>{$std->cMotivo}</cMotivo>"
+            . "<xMotivo>{$std->xMotivo}</xMotivo>";
         return $this->sefazEvento(
             'SVRS',
             $std->chNFe,

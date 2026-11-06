@@ -1146,6 +1146,8 @@ class Tools extends ToolsCommon
             212110 => ['versao' => '1.00', 'nome' => 'envEvento'],
             212120 => ['versao' => '1.00', 'nome' => 'envEvento'],
             211124 => ['versao' => '1.00', 'nome' => 'envEvento'],
+            412120 => ['versao' => '1.00', 'nome' => 'envEvento'],
+            412130 => ['versao' => '1.00', 'nome' => 'envEvento'],
         ];
         $verEvento = $this->urlVersion;
         if (!empty($eventos[$tpEvento])) {
@@ -1191,6 +1193,8 @@ class Tools extends ToolsCommon
                     112130,
                     112140,
                     112150,
+                    412120,
+                    412130,
                     self::EVT_INSUCESSO_ENTREGA,
                     self::EVT_CANCELA_INSUCESSO_ENTREGA,
                 ]
@@ -1546,6 +1550,14 @@ class Tools extends ToolsCommon
             case 212120:
                 $std->alias = 'envEvento';
                 $std->desc = 'Manifestação sobre Pedido de Transferência de Crédito de CBS em Operação de Sucessão';
+                break;
+            case 412120:
+                $std->alias = 'envEvento';
+                $std->desc = 'Manifestação do Fisco sobre Pedido de Transferência de Crédito de IBS em Operação de Sucessão';
+                break;
+            case 412130:
+                $std->alias = 'envEvento';
+                $std->desc = 'Manifestação do Fisco sobre Pedido de Transferência de Crédito de CBS em Operação de Sucessão';
                 break;
             default:
                 $msg = "O código do tipo de evento informado não corresponde a "

@@ -11,11 +11,14 @@ use DOMException;
  * @property  Dom $dom
  * @property stdClass $stdTot
  * @property array $aISSQN
+ * @property stdClass $stdISSQNTot
  * @method equilizeParameters($std, $possible)
  * @method conditionalNumberFormatting($value, $decimal = 2)
  */
 trait TraitTagDetISSQN
 {
+    protected array $aItensServ = [];
+
     /**
      * Grupo ISSQN U01 pai M01
      * tag NFe/infNFe/det[]/imposto/ISSQN (opcional)
@@ -56,6 +59,18 @@ trait TraitTagDetISSQN
             $this->stdISSQNTot->vDescIncond += $std->vDescIncond ?? 0.0;
             $this->stdISSQNTot->vDescCond += $std->vDescCond ?? 0.0;
         }
+
+        $this->aItensServ[] = $std->item;
+        // totalizador
+        if ($this->aProd[$std->item]->getElementsByTagName('indTot')->item(0)->nodeValue == 1) {
+            // Captura o valor do item
+            $vProd = (float) ($this->aProd[$std->item]->getElementsByTagName('vProd')->item(0)->nodeValue);
+
+            // Remove o valor to totalizador de produtos e Adiciona o valor do item no totalizador de serviços
+            $this->stdTot->vProd -= $vProd;
+            $this->stdISSQNTot->vServ += $vProd;
+        }
+
         $issqn = $this->dom->createElement("ISSQN");
         $this->dom->addChild(
             $issqn,

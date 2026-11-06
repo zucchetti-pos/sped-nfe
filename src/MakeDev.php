@@ -43,7 +43,7 @@ use NFePHP\NFe\Traits\TraitTagPgtoVinc;
 use stdClass;
 use DOMElement;
 
-final class MakeDev
+class MakeDev
 {
     use TraitTagInfNfe;
     use TraitTagIde;
@@ -82,6 +82,9 @@ final class MakeDev
     use TraitCalculations;
     use TraitTagGALCZFMCBS;
     use TraitTagPgtoVinc;
+
+    public const IBS_CRED_PRES_SUS_BLOCKED_UNTIL = '01-01-2033';
+    public const CBS_CRED_PRES_SUS_BLOCKED_UNTIL = '01-01-2027';
 
     public const METHOD_CALCULATION_V1 = 1; //by values, calculate vItem and vNFTot
     public const METHOD_CALCULATION_V2 = 2; //by tags, calculate vItem and vNFTot
@@ -786,9 +789,9 @@ final class MakeDev
                 }
                 //IBSCBS => imposto - somente para PL_010 em diante
                 if (!empty($this->aIBSCBS[$item])) {
-                    $ibscbs = $this->aIBSCBS[$item];
-                    //existe o grupo gIBSCBS no node IBSCBS ?
-                    $gIBSCBS = $ibscbs->getElementsByTagName("gIBSCBS")->item(0);
+                    $IBSCBS = $this->aIBSCBS[$item];
+                    $gIBSCBS = $IBSCBS->getElementsByTagName("gIBSCBS")->item(0);
+
                     if (!empty($this->aGTribRegular[$item]) && !empty($gIBSCBS)) {
                         //add gTribRegular
                         $gIBSCBS->appendChild($this->aGTribRegular[$item]);
@@ -808,28 +811,38 @@ final class MakeDev
                             $gCBS->appendChild($vCBS);
                         }
                         //add gIBSCBS ao node imposto
-                        $this->addTag($ibscbs, $gIBSCBS, 'Falta a tag IBSCBS!');
+                        $this->addTag($IBSCBS, $gIBSCBS, 'Falta a tag IBSCBS!');
                     } elseif (!empty($this->aGIBSCBSMono[$item])) {
                         //não existe gIBSCBS, então add gIBSCBSMono
-                        $this->addTag($ibscbs, $this->aGIBSCBSMono[$item], 'Falta a tag IBSCBS!');
+                        $this->addTag($IBSCBS, $this->aGIBSCBSMono[$item], 'Falta a tag IBSCBS!');
                     } elseif (!empty($this->aGTransfCred[$item])) {
                         //não existe gIBSCBS, nem gIBSCBSMono então add gTransfCred
-                        $this->addTag($ibscbs, $this->aGTransfCred[$item], 'Falta a tag IBSCBS!');
+                        $this->addTag($IBSCBS, $this->aGTransfCred[$item], 'Falta a tag IBSCBS!');
                     } elseif (!empty($this->aGAjusteCompet[$item])) {
                         //não existe gIBSCBS, nem gIBSCBSMono, nem gTransfCred entao add gAjusteCompet
-                        $this->addTag($ibscbs, $this->aGAjusteCompet[$item], 'Falta a tag IBSCBS!');
+                        $this->addTag($IBSCBS, $this->aGAjusteCompet[$item], 'Falta a tag IBSCBS!');
                     }
                     //gEstornoCred
                     if (!empty($this->aGEstornoCred[$item])) {
-                        $this->addTag($ibscbs, $this->aGEstornoCred[$item], 'Falta a tag IBSCBS!');
+                        $this->addTag($IBSCBS, $this->aGEstornoCred[$item], 'Falta a tag IBSCBS!');
                     }
                     //gCredPresOper
                     if (!empty($this->aGCredPresOper[$item])) {
-                        $this->addTag($ibscbs, $this->aGCredPresOper[$item], 'Falta a tag IBSCBS!');
+                        $this->addTag($IBSCBS, $this->aGCredPresOper[$item], 'Falta a tag IBSCBS!');
                     } elseif (!empty($this->aGCredPresIBSZFM[$item])) {
-                        $this->addTag($ibscbs, $this->aGCredPresIBSZFM[$item], 'Falta a tag IBSCBS!');
+                        $this->addTag($IBSCBS, $this->aGCredPresIBSZFM[$item], 'Falta a tag IBSCBS!');
                     }
-                    $this->addTag($imposto, $ibscbs, 'Falta a tag det/imposto!');
+                    //CredPres
+                    $gCredPresOper = $IBSCBS->getElementsByTagName("gCredPresOper")->item(0);
+                    if ($gCredPresOper) {
+                        if (!empty($this->aIBSCredPres[$item])) {
+                            $gCredPresOper->appendChild($this->aIBSCredPres[$item]);
+                        }
+                        if (!empty($this->aCBSCredPres[$item])) {
+                            $gCredPresOper->appendChild($this->aCBSCredPres[$item]);
+                        }
+                    }
+                    $this->addTag($imposto, $IBSCBS, 'Falta a tag det/imposto!');
                 }
             }
             //adiciona imposto ao node det
@@ -962,6 +975,30 @@ final class MakeDev
         }
     }
 
+    protected function addTagCompraGov()
+    {
+        if ($this->schema <= 9 || empty($this->gCompraGov)) {
+            return;
+        }
+        if (empty($this->ide)) {
+            $this->errors[] = 'Falta a tag "ide"';
+            return;
+        }
+        $this->addTag($this->ide, $this->gCompraGov ?? null, 'Falta a tag "ide"');
+    }
+
+    protected function addTagPagAntecipado()
+    {
+        if ($this->schema <= 9 || empty($this->gPagAntecipado)) {
+            return;
+        }
+        if (empty($this->ide)) {
+            $this->errors[] = 'Falta a tag "ide"';
+            return;
+        }
+        $this->addTag($this->ide, $this->gPagAntecipado ?? null, 'Falta a tag "ide"');
+    }
+
     /**
      * Adiciona a tag emit na tag infNFe
      * @return void
@@ -1019,7 +1056,7 @@ final class MakeDev
      */
     protected function addTagAutXML()
     {
-        if (count($this->aAutXML) == 0) {
+        if (is_countable($this->aAutXML) && count($this->aAutXML) == 0) {
             return;
         }
         if (empty($this->infNFe)) {
@@ -1183,7 +1220,6 @@ final class MakeDev
      */
     protected function addTagTotal()
     {
-        $vNFTot = null;
         $identificador = 'W01 <total> -';
         $total = $this->dom->createElement('total');
         if (!empty($this->stdTot->vProdLiq)) {

@@ -49,7 +49,7 @@ trait TraitTagDetIPI
             $std->CNPJProd,
             false,
             "$identificador CNPJ do produtor da mercadoria, quando diferente do emitente. "
-            . "Somente para os casos de exportação direta ou indireta. (CNPJProd)"
+                . "Somente para os casos de exportação direta ou indireta. (CNPJProd)"
         );
         $this->dom->addChild(
             $ipi,
@@ -105,7 +105,7 @@ trait TraitTagDetIPI
                     $this->conditionalNumberFormatting($std->qUnid, 4),
                     false,
                     "$identificador Quantidade total na unidade padrão para tributação (somente para os "
-                    . "produtos tributados por unidade) (qUnid)"
+                        . "produtos tributados por unidade) (qUnid)"
                 );
                 $this->dom->addChild(
                     $ipiTrib,

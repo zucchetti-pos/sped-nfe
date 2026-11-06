@@ -148,7 +148,7 @@ trait TraitTagDetICMS
                     $this->conditionalNumberFormatting($std->pFCP, 4),
                     false,
                     "$identificador Percentual do Fundo de "
-                    . "Combate à Pobreza (FCP)"
+                        . "Combate à Pobreza (FCP)"
                 );
                 $this->dom->addChild(
                     $icms,
@@ -156,7 +156,7 @@ trait TraitTagDetICMS
                     $this->conditionalNumberFormatting($std->vFCP),
                     false,
                     "$identificador Valor do Fundo de Combate "
-                    . "à Pobreza (FCP)"
+                        . "à Pobreza (FCP)"
                 );
                 break;
             case '02':
@@ -208,8 +208,7 @@ trait TraitTagDetICMS
                 $this->stdTot->vFCP += (float) !empty($std->vFCP) ? $std->vFCP : 0;
                 //dados calculo vItem
                 $this->aVItem[$std->item]['vFCPST'] = ($std->vFCPST ?? 0);
-                $this->aVItem[$std->item]['vICMSST'] = ($std->vICMSST ?? 0);
-                ;
+                $this->aVItem[$std->item]['vICMSST'] = ($std->vICMSST ?? 0);;
                 $icms = $this->dom->createElement("ICMS10");
                 $this->dom->addChild(
                     $icms,
@@ -266,7 +265,7 @@ trait TraitTagDetICMS
                     $this->conditionalNumberFormatting($std->pFCP, 4),
                     false,
                     "$identificador Percentual do Fundo de "
-                    . "Combate à Pobreza (FCP)"
+                        . "Combate à Pobreza (FCP)"
                 );
                 $this->dom->addChild(
                     $icms,
@@ -330,7 +329,7 @@ trait TraitTagDetICMS
                     $this->conditionalNumberFormatting($std->pFCPST, 4),
                     false,
                     "$identificador Percentual do Fundo de "
-                    . "Combate à Pobreza (FCP) ST"
+                        . "Combate à Pobreza (FCP) ST"
                 );
                 $this->dom->addChild(
                     $icms,
@@ -507,7 +506,7 @@ trait TraitTagDetICMS
                     $this->conditionalNumberFormatting($std->pFCP, 4),
                     false,
                     "$identificador Percentual do Fundo de "
-                    . "Combate à Pobreza (FCP)"
+                        . "Combate à Pobreza (FCP)"
                 );
                 $this->dom->addChild(
                     $icms,
@@ -537,7 +536,7 @@ trait TraitTagDetICMS
                     $std->indDeduzDeson,
                     false,
                     "$identificador Indica se o valor do ICMS desonerado (vICMSDeson) "
-                    . "deduz do valor do item (vProd)."
+                        . "deduz do valor do item (vProd)."
                 );
                 break;
             case '30':
@@ -549,8 +548,7 @@ trait TraitTagDetICMS
                 $this->aVItem[$std->item]['indDeduzDeson'] = ($std->indDeduzDeson ?? 0);
                 $this->aVItem[$std->item]['vICMSDeson'] = ($std->vICMSDeson ?? 0);
                 $this->aVItem[$std->item]['vFCPST'] = ($std->vFCPST ?? 0);
-                $this->aVItem[$std->item]['vICMSST'] = ($std->vICMSST ?? 0);
-                ;
+                $this->aVItem[$std->item]['vICMSST'] = ($std->vICMSST ?? 0);;
                 $icms = $this->dom->createElement("ICMS30");
                 $this->dom->addChild(
                     $icms,
@@ -621,7 +619,7 @@ trait TraitTagDetICMS
                     $this->conditionalNumberFormatting($std->pFCPST, 4),
                     false,
                     "$identificador Percentual do Fundo de "
-                    . "Combate à Pobreza (FCP) ST"
+                        . "Combate à Pobreza (FCP) ST"
                 );
                 $this->dom->addChild(
                     $icms,
@@ -651,7 +649,7 @@ trait TraitTagDetICMS
                     $std->indDeduzDeson,
                     false,
                     "$identificador Indica se o valor do ICMS desonerado (vICMSDeson) "
-                    . "deduz do valor do item (vProd)."
+                        . "deduz do valor do item (vProd)."
                 );
                 break;
             case '40':
@@ -697,7 +695,7 @@ trait TraitTagDetICMS
                     $std->indDeduzDeson,
                     false,
                     "$identificador Indica se o valor do ICMS desonerado (vICMSDeson) "
-                    . "deduz do valor do item (vProd)."
+                        . "deduz do valor do item (vProd)."
                 );
                 break;
             case '51':
@@ -739,7 +737,7 @@ trait TraitTagDetICMS
                     $std->cBenefRBC,
                     false,
                     "$identificador Código de Benefício Fiscal na UF aplicado ao "
-                    . "item quando houver RBC."
+                        . "item quando houver RBC."
                 );
                 $this->dom->addChild(
                     $icms,
@@ -796,7 +794,7 @@ trait TraitTagDetICMS
                     $this->conditionalNumberFormatting($std->pFCP, 4),
                     false,
                     "$identificador Percentual do Fundo de "
-                    . "Combate à Pobreza (FCP)"
+                        . "Combate à Pobreza (FCP)"
                 );
                 $this->dom->addChild(
                     $icms,
@@ -811,7 +809,7 @@ trait TraitTagDetICMS
                     $this->conditionalNumberFormatting($std->pFCPDif, 4),
                     false,
                     "$identificador Percentual do diferimento "
-                    . "do ICMS relativo ao Fundo de Combate à Pobreza (FCP)"
+                        . "do ICMS relativo ao Fundo de Combate à Pobreza (FCP)"
                 );
                 $this->dom->addChild(
                     $icms,
@@ -819,7 +817,7 @@ trait TraitTagDetICMS
                     $this->conditionalNumberFormatting($std->vFCPDif),
                     false,
                     "$identificador Valor do ICMS relativo ao "
-                    . "Fundo de Combate à Pobreza (FCP) diferido"
+                        . "Fundo de Combate à Pobreza (FCP) diferido"
                 );
                 $this->dom->addChild(
                     $icms,
@@ -827,7 +825,7 @@ trait TraitTagDetICMS
                     $this->conditionalNumberFormatting($std->vFCPEfet),
                     false,
                     "$identificador Valor efetivo do ICMS relativo "
-                    . "ao Fundo de Combate à Pobreza (FCP)"
+                        . "ao Fundo de Combate à Pobreza (FCP)"
                 );
                 break;
             case '53':
@@ -858,7 +856,7 @@ trait TraitTagDetICMS
                     $this->conditionalNumberFormatting($std->qBCMono, 4),
                     false,
                     "$identificador BC do ICMS em quantidade conforme unidade de medida "
-                    . "estabelecida na legislação para o produto"
+                        . "estabelecida na legislação para o produto"
                 );
                 $this->dom->addChild(
                     $icms,
@@ -873,8 +871,8 @@ trait TraitTagDetICMS
                     $this->conditionalNumberFormatting($std->vICMSMonoOp),
                     false,
                     "$identificador valor do ICMS é obtido pela multiplicação da alíquota ad "
-                    . "rem pela quantidade do produto conforme unidade de "
-                    . "medida estabelecida em legislação, como se não houvesseo diferimento."
+                        . "rem pela quantidade do produto conforme unidade de "
+                        . "medida estabelecida em legislação, como se não houvesseo diferimento."
                 );
                 $this->dom->addChild(
                     $icms,
@@ -949,7 +947,7 @@ trait TraitTagDetICMS
                     $this->conditionalNumberFormatting($std->vBCFCPSTRet),
                     false,
                     "$identificador Valor da Base de Cálculo "
-                    . "do FCP retido anteriormente por ST"
+                        . "do FCP retido anteriormente por ST"
                 );
                 $this->dom->addChild(
                     $icms,
@@ -957,7 +955,7 @@ trait TraitTagDetICMS
                     $this->conditionalNumberFormatting($std->pFCPSTRet, 4),
                     false,
                     "$identificador Percentual do FCP retido "
-                    . "anteriormente por Substituição Tributária"
+                        . "anteriormente por Substituição Tributária"
                 );
                 $this->dom->addChild(
                     $icms,
@@ -965,7 +963,7 @@ trait TraitTagDetICMS
                     $this->conditionalNumberFormatting($std->vFCPSTRet),
                     false,
                     "$identificador Valor do FCP retido por "
-                    . "Substituição Tributária"
+                        . "Substituição Tributária"
                 );
                 $this->dom->addChild(
                     $icms,
@@ -973,7 +971,7 @@ trait TraitTagDetICMS
                     $this->conditionalNumberFormatting($std->pRedBCEfet, 4),
                     false,
                     "$identificador Percentual de redução "
-                    . "para obtenção da base de cálculo efetiva"
+                        . "para obtenção da base de cálculo efetiva"
                 );
                 $this->dom->addChild(
                     $icms,
@@ -1049,8 +1047,7 @@ trait TraitTagDetICMS
                 $this->aVItem[$std->item]['indDeduzDeson'] = ($std->indDeduzDeson ?? 0);
                 $this->aVItem[$std->item]['vICMSDeson'] = ($std->vICMSDeson ?? 0);
                 $this->aVItem[$std->item]['vFCPST'] = ($std->vFCPST ?? 0);
-                $this->aVItem[$std->item]['vICMSST'] = ($std->vICMSST ?? 0);
-                ;
+                $this->aVItem[$std->item]['vICMSST'] = ($std->vICMSST ?? 0);;
                 $icms = $this->dom->createElement("ICMS70");
                 $this->dom->addChild(
                     $icms,
@@ -1114,7 +1111,7 @@ trait TraitTagDetICMS
                     $this->conditionalNumberFormatting($std->pFCP, 4),
                     false,
                     "$identificador Percentual do Fundo de "
-                    . "Combate à Pobreza (FCP)"
+                        . "Combate à Pobreza (FCP)"
                 );
                 $this->dom->addChild(
                     $icms,
@@ -1178,7 +1175,7 @@ trait TraitTagDetICMS
                     $this->conditionalNumberFormatting($std->pFCPST, 4),
                     false,
                     "$identificador Percentual do Fundo de "
-                    . "Combate à Pobreza (FCP) ST"
+                        . "Combate à Pobreza (FCP) ST"
                 );
                 $this->dom->addChild(
                     $icms,
@@ -1208,7 +1205,7 @@ trait TraitTagDetICMS
                     $std->indDeduzDeson,
                     false,
                     "$identificador Indica se o valor do ICMS desonerado (vICMSDeson) "
-                    . "deduz do valor do item (vProd)."
+                        . "deduz do valor do item (vProd)."
                 );
                 $this->dom->addChild(
                     $icms,
@@ -1237,8 +1234,7 @@ trait TraitTagDetICMS
                 $this->aVItem[$std->item]['indDeduzDeson'] = ($std->indDeduzDeson ?? 0);
                 $this->aVItem[$std->item]['vICMSDeson'] = ($std->vICMSDeson ?? 0);
                 $this->aVItem[$std->item]['vFCPST'] = ($std->vFCPST ?? 0);
-                $this->aVItem[$std->item]['vICMSST'] = ($std->vICMSST ?? 0);
-                ;
+                $this->aVItem[$std->item]['vICMSST'] = ($std->vICMSST ?? 0);;
                 $icms = $this->dom->createElement("ICMS90");
                 $this->dom->addChild(
                     $icms,
@@ -1276,6 +1272,13 @@ trait TraitTagDetICMS
                     "$identificador Percentual da Redução de BC"
                 );
                 //campo adicionado NT 2022.002 v1.30
+                $this->dom->addChild(
+                    $icms,
+                    'cBenefRBC',
+                    $std->cBenefRBC ?? null,
+                    false,
+                    "$identificador Código de Benefício Fiscal na UF aplicado ao item quando houver RBC"
+                );
                 $this->dom->addChild(
                     $icms,
                     'cBenefRBC',
@@ -1334,7 +1337,7 @@ trait TraitTagDetICMS
                     $this->conditionalNumberFormatting($std->pFCP, 4),
                     false,
                     "$identificador Percentual do Fundo de "
-                    . "Combate à Pobreza (FCP)"
+                        . "Combate à Pobreza (FCP)"
                 );
                 $this->dom->addChild(
                     $icms,
@@ -1367,6 +1370,27 @@ trait TraitTagDetICMS
                     "$identificador Valor efetivo do ICMS relativo ao Fundo de Combate à Pobreza (FCP)"
                 );
                 //fim do grupo adicional
+                $this->dom->addChild(
+                    $icms,
+                    'pFCPDif',
+                    $this->conditionalNumberFormatting($std->pFCPDif ?? null, 4),
+                    false,
+                    "$identificador Percentual do diferimento do ICMS relativo ao Fundo de Combate à Pobreza"
+                );
+                $this->dom->addChild(
+                    $icms,
+                    'vFCPDif',
+                    $this->conditionalNumberFormatting($std->vFCPDif ?? null),
+                    false,
+                    "$identificador Valor do ICMS relativo ao Fundo de Combate à Pobreza (FCP) diferido"
+                );
+                $this->dom->addChild(
+                    $icms,
+                    'vFCPEfet',
+                    $this->conditionalNumberFormatting($std->vFCPEfet ?? null),
+                    false,
+                    "$identificador Valor efetivo do ICMS relativo ao Fundo de Combate à Pobreza (FCP)"
+                );
                 $this->dom->addChild(
                     $icms,
                     'modBCST',
@@ -1422,7 +1446,7 @@ trait TraitTagDetICMS
                     $this->conditionalNumberFormatting($std->pFCPST, 4),
                     false,
                     "$identificador Percentual do Fundo de "
-                    . "Combate à Pobreza (FCP) ST"
+                        . "Combate à Pobreza (FCP) ST"
                 );
                 $this->dom->addChild(
                     $icms,
@@ -1452,7 +1476,7 @@ trait TraitTagDetICMS
                     $std->indDeduzDeson,
                     false,
                     "$identificador Indica se o valor do ICMS desonerado (vICMSDeson) "
-                    . "deduz do valor do item (vProd)."
+                        . "deduz do valor do item (vProd)."
                 );
                 $this->dom->addChild(
                     $icms,
@@ -1622,7 +1646,7 @@ trait TraitTagDetICMS
             $this->conditionalNumberFormatting($std->pFCPST, 4),
             false,
             "$identificador Percentual do Fundo de "
-            . "Combate à Pobreza (FCP) ST"
+                . "Combate à Pobreza (FCP) ST"
         );
         $this->dom->addChild(
             $icmsPart,
@@ -1891,7 +1915,7 @@ trait TraitTagDetICMS
                     $this->conditionalNumberFormatting($std->vCredICMSSN),
                     true,
                     "$identificador Valor crédito do ICMS que pode ser aproveitado nos termos do"
-                    . " art. 23 da LC 123 (Simples Nacional)"
+                        . " art. 23 da LC 123 (Simples Nacional)"
                 );
                 break;
             case '102':
@@ -1981,7 +2005,7 @@ trait TraitTagDetICMS
                     $this->conditionalNumberFormatting($std->vBCFCPST),
                     false,
                     "$identificador Valor da Base de Cálculo do FCP "
-                    . "retido por Substituição Tributária"
+                        . "retido por Substituição Tributária"
                 );
                 $this->dom->addChild(
                     $icmsSN,
@@ -1989,7 +2013,7 @@ trait TraitTagDetICMS
                     $this->conditionalNumberFormatting($std->pFCPST, 4),
                     false,
                     "$identificador Percentual do FCP retido por "
-                    . "Substituição Tributária"
+                        . "Substituição Tributária"
                 );
                 $this->dom->addChild(
                     $icmsSN,
@@ -2011,7 +2035,7 @@ trait TraitTagDetICMS
                     $this->conditionalNumberFormatting($std->vCredICMSSN),
                     false,
                     "$identificador Valor crédito do ICMS que pode ser aproveitado nos "
-                    . "termos do art. 23 da LC 123 (Simples Nacional)"
+                        . "termos do art. 23 da LC 123 (Simples Nacional)"
                 );
                 break;
             case '202':
@@ -2082,7 +2106,7 @@ trait TraitTagDetICMS
                     $this->conditionalNumberFormatting($std->vBCFCPST),
                     false,
                     "$identificador Valor da Base de Cálculo do FCP "
-                    . "retido por Substituição Tributária"
+                        . "retido por Substituição Tributária"
                 );
                 $this->dom->addChild(
                     $icmsSN,
@@ -2090,7 +2114,7 @@ trait TraitTagDetICMS
                     $this->conditionalNumberFormatting($std->pFCPST, 4),
                     false,
                     "$identificador Percentual do FCP retido por "
-                    . "Substituição Tributária"
+                        . "Substituição Tributária"
                 );
                 $this->dom->addChild(
                     $icmsSN,
@@ -2150,7 +2174,7 @@ trait TraitTagDetICMS
                     $this->conditionalNumberFormatting($std->vBCFCPSTRet, 2),
                     false,
                     "$identificador Valor da Base de Cálculo do FCP "
-                    . "retido anteriormente por Substituição Tributária"
+                        . "retido anteriormente por Substituição Tributária"
                 );
                 $this->dom->addChild(
                     $icmsSN,
@@ -2158,7 +2182,7 @@ trait TraitTagDetICMS
                     $this->conditionalNumberFormatting($std->pFCPSTRet, 4),
                     false,
                     "$identificador Percentual do FCP retido anteriormente por "
-                    . "Substituição Tributária"
+                        . "Substituição Tributária"
                 );
                 $this->dom->addChild(
                     $icmsSN,
@@ -2166,7 +2190,7 @@ trait TraitTagDetICMS
                     $this->conditionalNumberFormatting($std->vFCPSTRet),
                     false,
                     "$identificador Valor do FCP retido anteiormente por "
-                    . "Substituição Tributária"
+                        . "Substituição Tributária"
                 );
                 $this->dom->addChild(
                     $icmsSN,
@@ -2174,7 +2198,7 @@ trait TraitTagDetICMS
                     $this->conditionalNumberFormatting($std->pRedBCEfet, 4),
                     false,
                     "$identificador Percentual de redução da base "
-                    . "de cálculo efetiva"
+                        . "de cálculo efetiva"
                 );
                 $this->dom->addChild(
                     $icmsSN,
@@ -2301,7 +2325,7 @@ trait TraitTagDetICMS
                     $this->conditionalNumberFormatting($std->vBCFCPST),
                     false,
                     "$identificador Valor da Base de Cálculo do FCP "
-                    . "retido por Substituição Tributária"
+                        . "retido por Substituição Tributária"
                 );
                 $this->dom->addChild(
                     $icmsSN,
@@ -2309,7 +2333,7 @@ trait TraitTagDetICMS
                     $this->conditionalNumberFormatting($std->pFCPST, 4),
                     false,
                     "$identificador Percentual do FCP retido por "
-                    . "Substituição Tributária"
+                        . "Substituição Tributária"
                 );
                 $this->dom->addChild(
                     $icmsSN,
@@ -2331,7 +2355,7 @@ trait TraitTagDetICMS
                     $this->conditionalNumberFormatting($std->vCredICMSSN),
                     false,
                     "$identificador Valor crédito do ICMS que pode ser aproveitado nos termos do"
-                    . " art. 23 da LC 123 (Simples Nacional)"
+                        . " art. 23 da LC 123 (Simples Nacional)"
                 );
                 break;
         }
