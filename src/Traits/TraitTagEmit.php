@@ -110,7 +110,6 @@ trait TraitTagEmit
             true,
             $identificador . "Código de Regime Tributário do emitente"
         );
-        //ISUFEmit existe apenas a partir da PL_010, o PL_009_V4 rejeita a tag
         if ($this->schema > 9 && !empty($std->ISUFEmit)) {
             $this->dom->addChild(
                 $this->emit,
