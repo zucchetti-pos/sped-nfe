@@ -133,7 +133,7 @@ trait TraitTagDet
             $cean,
             true,
             "$identificador GTIN (Global Trade Item Number) do produto, antigo "
-            . "código EAN ou código de barras",
+                . "código EAN ou código de barras",
             true
         );
         $this->dom->addChild(
@@ -154,7 +154,7 @@ trait TraitTagDet
             true,
             "$identificador Descrição do produto ou serviço"
         );
-        if (!in_array(strlen($std->NCM ?? ''), [2,8])) {
+        if (!in_array(strlen($std->NCM ?? ''), [2, 8])) {
             $this->errors[] = "Item: $std->item NCM $std->NCM deve ter 2 ou 8 dígitos";
         }
         $this->dom->addChild(
@@ -269,7 +269,7 @@ trait TraitTagDet
             $ceantrib,
             true,
             "$identificador GTIN (Global Trade Item Number) da unidade tributável, antigo "
-            . "código EAN ou código de barras",
+                . "código EAN ou código de barras",
             true
         );
         $this->dom->addChild(
@@ -278,7 +278,7 @@ trait TraitTagDet
             $std->cBarraTrib,
             false,
             "$identificador cBarraTrib Código de Barras da "
-            . "unidade tributável que seja diferente do padrão GTIN"
+                . "unidade tributável que seja diferente do padrão GTIN"
         );
         $this->dom->addChild(
             $prod,
@@ -336,13 +336,15 @@ trait TraitTagDet
             true,
             "$identificador Indica se valor do Item (vProd) entra no valor total da NF-e (indTot)"
         );
-        $this->dom->addChild(
-            $prod,
-            "indBemMovelUsado",
-            !empty($std->indBemMovelUsado) ? 1 : null,
-            false,
-            "$identificador Indicador de fornecimento de bem móvel usado (indBemMovelUsado)"
-        );
+        if ($this->schema == 10) {
+            $this->dom->addChild(
+                $prod,
+                "indBemMovelUsado",
+                !empty($std->indBemMovelUsado) ? 1 : null,
+                false,
+                "$identificador Indicador de fornecimento de bem móvel usado (indBemMovelUsado)"
+            );
+        }
         $this->dom->addChild(
             $prod,
             "xPed",
@@ -363,7 +365,7 @@ trait TraitTagDet
             $std->nFCI,
             false,
             "$identificador Número de controle da FCI "
-            . "Ficha de Conteúdo de Importação"
+                . "Ficha de Conteúdo de Importação"
         );
         $this->aProd[$std->item] = $prod;
         return $prod;
@@ -601,7 +603,7 @@ trait TraitTagDet
             $std->tpViaTransp,
             true,
             "$identificador Via de transporte internacional "
-            . "informada na Declaração de Importação (DI)"
+                . "informada na Declaração de Importação (DI)"
         );
         $this->dom->addChild(
             $tDI,
@@ -609,7 +611,7 @@ trait TraitTagDet
             $this->conditionalNumberFormatting($std->vAFRMM),
             false,
             "$identificador Valor da AFRMM "
-            . "- Adicional ao Frete para Renovação da Marinha Mercante"
+                . "- Adicional ao Frete para Renovação da Marinha Mercante"
         );
         $this->dom->addChild(
             $tDI,

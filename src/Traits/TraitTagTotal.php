@@ -23,6 +23,8 @@ use DOMException;
  */
 trait TraitTagTotal
 {
+    protected bool $flagISSQNCalc = false;
+
     /**
      * Valor vNTTot
      * tag NFe/infNFe/total/vNFTot
@@ -203,7 +205,7 @@ trait TraitTagTotal
             $this->conditionalNumberFormatting($vFCPUFDest),
             false,
             "$identificador Valor total do ICMS relativo ao Fundo de Combate à Pobreza(FCP) "
-            . "para a UF de destino"
+                . "para a UF de destino"
         );
         $this->dom->addChild(
             $ICMSTot,
@@ -226,7 +228,7 @@ trait TraitTagTotal
             $this->conditionalNumberFormatting($vFCP),
             false,
             "$identificador Valor total do ICMS relativo ao Fundo de Combate à Pobreza(FCP) "
-            . "para a UF de destino"
+                . "para a UF de destino"
         );
         $this->dom->addChild(
             $ICMSTot,
@@ -249,7 +251,7 @@ trait TraitTagTotal
             $this->conditionalNumberFormatting($vFCPST),
             false, //true para 4.00
             "$identificador Valor Total do FCP (Fundo de Combate à Pobreza) "
-            . "retido por substituição tributária"
+                . "retido por substituição tributária"
         );
         //incluso na 4.00
         $this->dom->addChild(
@@ -258,7 +260,7 @@ trait TraitTagTotal
             $this->conditionalNumberFormatting($vFCPSTRet),
             false, //true para 4.00
             "$identificador Valor Total do FCP retido anteriormente por "
-            . "Substituição Tributária"
+                . "Substituição Tributária"
         );
         //incluso NT 2023.001-1.10
         $this->dom->addChild(
@@ -396,7 +398,7 @@ trait TraitTagTotal
      * Grupo Totais referentes ao ISSQN W17 pai W01
      * tag NFe/infNFe/total/ISSQNTot (opcional)
      * @param stdClass|null $std
-     * @return DOMElement|false
+     * @return DOMElement|null
      * @throws DOMException
      */
     public function tagISSQNTot(?stdClass $std = null)
@@ -595,6 +597,7 @@ trait TraitTagTotal
             'gMono_vCBSMonoReten',
             'gMono_vIBSMonoRet',
             'gMono_vCBSMonoRet',
+            'vNFTot',
             'gEstonoCred_vIBSEstCred',
             'gEstonoCred_vCBSEstCred',
         ];
@@ -622,6 +625,7 @@ trait TraitTagTotal
         $gMono_vCBSMonoReten = $std->gMono_vCBSMonoReten ?? $this->stdIBSCBSTot->gMono->vCBSMonoReten;
         $gMono_vIBSMonoRet = $std->gMono_vIBSMonoRet ?? $this->stdIBSCBSTot->gMono->vIBSMonoRet;
         $gMono_vCBSMonoRet = $std->gMono_vCBSMonoRet ?? $this->stdIBSCBSTot->gMono->vCBSMonoRet;
+        $this->stdTot->vNFTot = $std->vNFTot ?? 0;
         $gEstornoCred_vIBSEstCred = $std->gEstonoCred_vIBSEstCred ?? $this->stdIBSCBSTot->gEstornoCred->vIBSEstCred;
         $gEstornoCred_vCBSEstCred = $std->gEstonoCred_vCBSEstCred ?? $this->stdIBSCBSTot->gEstornoCred->vCBSEstCred;
 

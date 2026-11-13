@@ -2,7 +2,9 @@
 
 namespace NFePHP\NFe\Traits;
 
+use DateTime;
 use NFePHP\Common\DOMImproved as Dom;
+use NFePHP\NFe\MakeDev;
 use stdClass;
 use DOMElement;
 use DOMException;
@@ -86,7 +88,8 @@ trait TraitTagDetIBSCBS
             'gCBS_vDevTrib', //opcional Valor do tributo devolvido 13v2
             'gCBS_pRedAliq', //opcional Percentual da redução de alíquota 3v2-4
             'gCBS_pAliqEfet', //opcional Alíquota Efetiva da CBS que será aplicada a Base de Cálculo 3v2-4
-            'gCBS_vCBS', //opcional Valor da CBS 13v2
+            'gCBS_vCBS', //opcional Valor da CBS 13v2,
+            'gIBS_vIBS',
         ];
         $std = $this->equilizeParameters($std, $possible);
         $this->cst_ibscbs = $std->CST ?? null;
@@ -136,7 +139,7 @@ trait TraitTagDetIBSCBS
             !empty($std->indDoacao) ? 1 : null, //somente aceita numero 1
             false,
             "$identificador Indica a natureza da operação de doação, orientando a apuração e a geração"
-            . "de débitos ou estornos conforme o cenário (indDoacao)"
+                . "de débitos ou estornos conforme o cenário (indDoacao)"
         );
         if (!empty($std->cClassTrib)) {
             $this->flagIBSCBS = true;
@@ -215,7 +218,7 @@ trait TraitTagDetIBSCBS
                     $this->conditionalNumberFormatting($std->gIBSUF_pAliqEfet ?? 0, 4),
                     true,
                     "$identificador Alíquota Efetiva do IBS de competência das UF "
-                    . "que será aplicada a Base de Cálculo (pAliqEfet)"
+                        . "que será aplicada a Base de Cálculo (pAliqEfet)"
                 );
                 $gIBSUF->appendChild($gRed);
             }
@@ -292,7 +295,7 @@ trait TraitTagDetIBSCBS
                     $this->conditionalNumberFormatting($std->gIBSMun_pAliqEfet ?? 0, 4),
                     true,
                     "$identificador Alíquota Efetiva do IBS de competência das UF que será aplicada "
-                    . "a Base de Cálculo (pAliqEfet)"
+                        . "a Base de Cálculo (pAliqEfet)"
                 );
                 $gIBSMun->appendChild($gRed);
             }
@@ -376,7 +379,7 @@ trait TraitTagDetIBSCBS
                     $this->conditionalNumberFormatting($std->gCBS_pAliqEfet ?? 0, 4),
                     true,
                     "$identificador Alíquota Efetiva do IBS de competência das UF que será aplicada "
-                    . "a Base de Cálculo (pAliqEfet)"
+                        . "a Base de Cálculo (pAliqEfet)"
                 );
                 $gCBS->appendChild($gRed);
             }
@@ -431,7 +434,7 @@ trait TraitTagDetIBSCBS
             $std->cClassTribReg,
             true,
             "$identificador Informar qual seria o cClassTrib caso não cumprida a condição "
-            . "resolutória/suspensiva (cClassTribReg)"
+                . "resolutória/suspensiva (cClassTribReg)"
         );
         $this->dom->addChild(
             $gTribRegular,
@@ -1097,7 +1100,7 @@ trait TraitTagDetIBSCBS
             $std->tpCredPresIBSZFM,
             true,
             "$identificador Tipo de classificação de acordo com o art. 450, paragrafo 1, da LC 214/25 para o "
-            . "cálculo do crédito presumido na ZFM (tpCredPresIBSZFM)"
+                . "cálculo do crédito presumido na ZFM (tpCredPresIBSZFM)"
         );
         $this->dom->addChild(
             $cred,
@@ -1105,10 +1108,24 @@ trait TraitTagDetIBSCBS
             $this->conditionalNumberFormatting($std->vCredPresIBSZFM),
             true,
             "$identificador Valor do crédito presumido calculado sobre o saldo devedor "
-            . "apurado (vCredPresIBSZFM)"
+                . "apurado (vCredPresIBSZFM)"
         );
         $this->aGCredPresIBSZFM[$std->item] = $cred;
         return $cred;
+    }
+
+    private function isCBSCredPresSusBlocked()
+    {
+        $currentDate = new DateTime();
+        $deadline = new DateTime(MakeDev::CBS_CRED_PRES_SUS_BLOCKED_UNTIL);
+        return $currentDate > $deadline;
+    }
+
+    private function isIBSCredPresSusBlocked()
+    {
+        $currentDate = new DateTime();
+        $deadline = new DateTime(MakeDev::IBS_CRED_PRES_SUS_BLOCKED_UNTIL);
+        return $currentDate > $deadline;
     }
 
     /**
@@ -1250,7 +1267,7 @@ trait TraitTagDetIBSCBS
                 true,
                 "$identificador Percentual do Crédito Presumido (ibs_pCredPres)"
             );
-            if (!empty($std->ibs_vCredPres)) {
+            if (isset($std->ibs_vCredPres)) {
                 $this->dom->addChild(
                     $gibs,
                     "vCredPres",
@@ -1278,7 +1295,7 @@ trait TraitTagDetIBSCBS
                 true,
                 "$identificador Percentual do Crédito Presumido (cbs_pCredPres)"
             );
-            if (!empty($std->cbs_vCredPres)) {
+            if (isset($std->cbs_vCredPres)) {
                 $this->dom->addChild(
                     $gcbs,
                     "vCredPres",

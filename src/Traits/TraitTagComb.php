@@ -42,7 +42,8 @@ trait TraitTagComb
             'qBCProd',
             'vAliqProd',
             'vCIDE',
-            'pBio'
+            'pBio',
+            'origComb'
         ];
         $std = $this->equilizeParameters($std, $possible);
 
@@ -121,6 +122,12 @@ trait TraitTagComb
             true,
             "$identificador  Sigla da UF de consumo"
         );
+
+        if (!empty($std->origComb)) {
+            $tagOrigmComb = $this->tagorigComb($std->origComb);
+            $this->dom->appChild($comb, $tagOrigmComb);
+        }
+
         if ($std->qBCProd != "") {
             $tagCIDE = $this->dom->createElement("CIDE");
             $this->dom->addChild(

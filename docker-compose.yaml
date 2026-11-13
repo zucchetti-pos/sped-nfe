@@ -1,0 +1,10 @@
+services:
+  sped-nfe-webserver:
+    container_name: sped-nfe-webserver
+    ports:
+      - "8759:8080"
+    build: 
+      context: .
+      dockerfile: ./.devcontainer/Dockerfile
+    restart: unless-stopped
+
