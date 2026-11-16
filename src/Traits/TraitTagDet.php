@@ -336,13 +336,15 @@ trait TraitTagDet
             true,
             "$identificador Indica se valor do Item (vProd) entra no valor total da NF-e (indTot)"
         );
-        $this->dom->addChild(
-            $prod,
-            "indBemMovelUsado",
-            !empty($std->indBemMovelUsado) ? 1 : null,
-            false,
-            "$identificador Indicador de fornecimento de bem móvel usado (indBemMovelUsado)"
-        );
+        if ($this->schema == 10) {
+            $this->dom->addChild(
+                $prod,
+                "indBemMovelUsado",
+                !empty($std->indBemMovelUsado) ? 1 : null,
+                false,
+                "$identificador Indicador de fornecimento de bem móvel usado (indBemMovelUsado)"
+            );
+        }
         $this->dom->addChild(
             $prod,
             "xPed",

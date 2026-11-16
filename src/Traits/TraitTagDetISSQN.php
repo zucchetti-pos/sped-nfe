@@ -11,6 +11,7 @@ use DOMException;
  * @property  Dom $dom
  * @property stdClass $stdTot
  * @property array $aISSQN
+ * @property stdClass $stdISSQNTot
  * @method equilizeParameters($std, $possible)
  * @method conditionalNumberFormatting($value, $decimal = 2)
  */
@@ -56,6 +57,14 @@ trait TraitTagDetISSQN
             $this->stdISSQNTot->vDescIncond += $std->vDescIncond ?? 0.0;
             $this->stdISSQNTot->vDescCond += $std->vDescCond ?? 0.0;
         }
+
+        // Serviço com indTot=1: vProd vai para ISSQNTot/vServ, não permanece em ICMSTot/vProd
+        if ($this->aProd[$std->item]->getElementsByTagName('indTot')->item(0)->nodeValue == 1) {
+            $vProd = (float) ($this->aProd[$std->item]->getElementsByTagName('vProd')->item(0)->nodeValue);
+            $this->stdTot->vProd -= $vProd;
+            $this->stdISSQNTot->vServ += $vProd;
+        }
+
         $issqn = $this->dom->createElement("ISSQN");
         $this->dom->addChild(
             $issqn,

@@ -43,7 +43,7 @@ use NFePHP\NFe\Traits\TraitTagPgtoVinc;
 use stdClass;
 use DOMElement;
 
-final class Make
+class Make
 {
     use TraitTagInfNfe;
     use TraitTagIde;
@@ -111,7 +111,7 @@ final class Make
     protected stdClass $stdIBSCBSTot;
     protected DOMElement $NFe;
     protected DOMElement $infNFe;
-    protected DOMElement $ide;
+    protected ?DOMElement $ide;
     protected ?DOMElement $gCompraGov;
     protected ?DOMElement $gPagAntecipado;
     protected DOMElement $emit;
