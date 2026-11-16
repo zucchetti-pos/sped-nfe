@@ -323,7 +323,7 @@ class Tools extends ToolsCommon
 
         $this->isValid($this->urlVersion, $request, 'consCad');
         if (strtoupper($uf) === 'MT') {
-            $request = "<nfeDadosMsg>$request</nfeDadosMsg>" ;
+            $request = "<nfeDadosMsg>$request</nfeDadosMsg>";
         }
         $this->lastRequest = $request;
         $parameters = ['nfeDadosMsg' => $request];
@@ -580,9 +580,9 @@ class Tools extends ToolsCommon
         $sSeqEvento = str_pad((string)$nSeqEvento, 2, "0", STR_PAD_LEFT);
         $idPedidoCancelado = "ID{$origEvent}{$chave}{$sSeqEvento}";
         $tagAdic = "<idPedidoCancelado>"
-                . "$idPedidoCancelado"
-                . "</idPedidoCancelado>"
-                . "<nProt>$nProt</nProt>";
+            . "$idPedidoCancelado"
+            . "</idPedidoCancelado>"
+            . "<nProt>$nProt</nProt>";
         return $this->sefazEvento($uf, $chave, $tpEvento, $nSeqEvento, $tagAdic, $dhEvento, $lote);
     }
 
@@ -633,7 +633,7 @@ class Tools extends ToolsCommon
         if ($this->modelo != 65) {
             throw new InvalidArgumentException(
                 'Cancelamento pro Substituição deve ser usado apenas para '
-                . 'operações com modelo 65 NFCe'
+                    . 'operações com modelo 65 NFCe'
             );
         }
         if (empty($verAplic) && !empty($this->verAplic)) {
@@ -645,8 +645,8 @@ class Tools extends ToolsCommon
         ) {
             throw new InvalidArgumentException(
                 'CancelamentoPorSubs: chave da NFCe cancelada, justificativa, '
-                . 'protocolo, chave da NFCe substituta, ou versão do aplicativo '
-                . 'emissor não podem ser vazios!'
+                    . 'protocolo, chave da NFCe substituta, ou versão do aplicativo '
+                    . 'emissor não podem ser vazios!'
             );
         }
         $uf = $this->validKeyByUF($chave);
@@ -876,7 +876,7 @@ class Tools extends ToolsCommon
         if ($std->cancelar) {
             $tpEvento = self::EVT_CANCELA_CONCILIACAO;
             $tagAdic = "<verAplic>{$std->verAplic}</verAplic>"
-            . "<nProtEvento>{$std->protocolo}</nProtEvento>";
+                . "<nProtEvento>{$std->protocolo}</nProtEvento>";
         }
         /*
             NT 2024.002 1.00 Maio/2024, comentário P08 elemento cOrgao
@@ -1313,14 +1313,14 @@ class Tools extends ToolsCommon
             . "</admCscNFCe>";
         if ($indOp == 3) {
             $request = "<admCscNFCe versao=\"$this->urlVersion\" xmlns=\"$this->urlPortal\">"
-            . "<tpAmb>$this->tpAmb</tpAmb>"
-            . "<indOp>$indOp</indOp>"
-            . "<raizCNPJ>$raizCNPJ</raizCNPJ>"
-            . "<dadosCsc>"
-            . "<idCsc>" . $this->config->CSCid . "</idCsc>"
-            . "<codigoCsc>" . $this->config->CSC . "</codigoCsc>"
-            . "</dadosCsc>"
-            . "</admCscNFCe>";
+                . "<tpAmb>$this->tpAmb</tpAmb>"
+                . "<indOp>$indOp</indOp>"
+                . "<raizCNPJ>$raizCNPJ</raizCNPJ>"
+                . "<dadosCsc>"
+                . "<idCsc>" . $this->config->CSCid . "</idCsc>"
+                . "<codigoCsc>" . $this->config->CSC . "</codigoCsc>"
+                . "</dadosCsc>"
+                . "</admCscNFCe>";
         }
         //o xsd não está disponivel
         $this->isValid($this->urlVersion, $request, 'admCscNFCe');
@@ -1537,15 +1537,17 @@ class Tools extends ToolsCommon
                 break;
             case 412120:
                 $std->alias = 'envEvento';
-                $std->desc = 'Manifestação do Fisco sobre Pedido de Transferência de Crédito de IBS em Operação de Sucessão';
+                $std->desc = 'Manifestação do Fisco sobre Pedido de Transferência de Crédito de IBS '
+                    . 'em Operação de Sucessão';
                 break;
             case 412130:
                 $std->alias = 'envEvento';
-                $std->desc = 'Manifestação do Fisco sobre Pedido de Transferência de Crédito de CBS em Operação de Sucessão';
+                $std->desc = 'Manifestação do Fisco sobre Pedido de Transferência de Crédito de CBS '
+                    . 'em Operação de Sucessão';
                 break;
             default:
                 $msg = "O código do tipo de evento informado não corresponde a "
-                . "nenhum evento estabelecido.";
+                    . "nenhum evento estabelecido.";
                 throw new RuntimeException($msg);
         }
         return $std;
