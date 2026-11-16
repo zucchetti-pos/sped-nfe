@@ -43,7 +43,7 @@ use NFePHP\NFe\Traits\TraitTagPgtoVinc;
 use stdClass;
 use DOMElement;
 
-final class MakeDev
+class MakeDev
 {
     use TraitTagInfNfe;
     use TraitTagIde;
