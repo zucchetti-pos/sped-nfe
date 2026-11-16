@@ -200,6 +200,88 @@ class TraitsCoverageTest extends TestCase
         $this->assertInstanceOf(\DOMElement::class, $issqn);
     }
 
+    public function test_tagISSQN_moves_vProd_to_vServ_when_indTot_is_one(): void
+    {
+        $this->setupBaseTags();
+        $this->addProduct();
+        $this->assertSame(100.0, (float) $this->make->stdTot->vProd);
+
+        $std = new stdClass();
+        $std->item = 1;
+        $std->vTotTrib = '0';
+        $this->make->tagimposto($std);
+
+        $std = new stdClass();
+        $std->item = 1;
+        $std->vBC = 100.00;
+        $std->vAliq = 5.0000;
+        $std->vISSQN = 5.00;
+        $std->cMunFG = '3550308';
+        $std->cListServ = '1401';
+        $std->indISS = '1';
+        $std->indIncentivo = '2';
+        $this->make->tagISSQN($std);
+
+        $prop = new \ReflectionProperty($this->make, 'stdISSQNTot');
+        $prop->setAccessible(true);
+        $stdISSQNTot = $prop->getValue($this->make);
+        $this->assertSame(0.0, (float) $this->make->stdTot->vProd);
+        $this->assertSame(100.0, (float) $stdISSQNTot->vServ);
+    }
+
+    public function test_tagemit_omits_empty_ISUFEmit(): void
+    {
+        $std = new stdClass();
+        $std->xNome = 'EMPRESA TESTE LTDA';
+        $std->CNPJ = '58716523000119';
+        $std->CRT = '3';
+        $std->IE = '123456789012';
+        $emit = $this->make->tagemit($std);
+
+        $this->assertNull($emit->getElementsByTagName('ISUFEmit')->item(0));
+    }
+
+    public function test_tagemit_includes_ISUFEmit_when_informed(): void
+    {
+        $std = new stdClass();
+        $std->xNome = 'EMPRESA TESTE LTDA';
+        $std->CNPJ = '58716523000119';
+        $std->CRT = '3';
+        $std->IE = '123456789012';
+        $std->ISUFEmit = '12345678';
+        $emit = $this->make->tagemit($std);
+
+        $this->assertSame('12345678', $emit->getElementsByTagName('ISUFEmit')->item(0)->nodeValue);
+    }
+
+    public function test_tagprod_indBemMovelUsado_only_on_schema_10(): void
+    {
+        $makeSchema9 = new Make();
+        $std = new stdClass();
+        $std->item = 1;
+        $std->cProd = '001';
+        $std->cEAN = 'SEM GTIN';
+        $std->xProd = 'PRODUTO TESTE';
+        $std->NCM = '84719012';
+        $std->CFOP = '5102';
+        $std->uCom = 'UN';
+        $std->qCom = '1.0000';
+        $std->vUnCom = '100.00';
+        $std->vProd = '100.00';
+        $std->cEANTrib = 'SEM GTIN';
+        $std->uTrib = 'UN';
+        $std->qTrib = '1.0000';
+        $std->vUnTrib = '100.00';
+        $std->indTot = 1;
+        $std->indBemMovelUsado = 1;
+        $prod9 = $makeSchema9->tagprod($std);
+        $this->assertNull($prod9->getElementsByTagName('indBemMovelUsado')->item(0));
+
+        $makeSchema10 = new Make('PL_010_V1.30');
+        $prod10 = $makeSchema10->tagprod($std);
+        $this->assertSame('1', $prod10->getElementsByTagName('indBemMovelUsado')->item(0)->nodeValue);
+    }
+
     public function test_tagISSQN_optional_fields_null(): void
     {
         $this->setupBaseTags();
@@ -1182,6 +1264,38 @@ class TraitsCoverageTest extends TestCase
         $this->assertStringContainsString('<vBCCredPres>100.00</vBCCredPres>', $request);
     }
 
+    public function test_sefazSolApropCredPresumido_with_gCBSCredPres(): void
+    {
+        $tools = $this->getTools();
+
+        $itens = [];
+        $itens[] = (object) [
+            'item' => 1,
+            'vBC' => 100.00,
+            'cCredPres' => '01',
+            'gIBS' => (object) [
+                'pCredPres' => 2.5000,
+                'vCredPres' => 2.50,
+            ],
+            'gCBSCredPres' => (object) [
+                'pCredPres' => 3.5000,
+                'vCredPres' => 3.50,
+            ],
+        ];
+
+        $std = new stdClass();
+        $std->chNFe = $this->makeChaveNFe55();
+        $std->tpAutor = 2;
+        $std->nSeqEvento = 1;
+        $std->itens = $itens;
+        $tools->sefazSolApropCredPresumido($std);
+        $request = $tools->getRequest();
+
+        $this->assertStringContainsString('<gCBSCredPres>', $request);
+        $this->assertStringContainsString('<pCredPres>3.5000</pCredPres>', $request);
+        $this->assertStringContainsString('<vCredPres>3.50</vCredPres>', $request);
+    }
+
     public function test_sefazSolApropCredPresumido_without_gIBS_gCBS(): void
     {
         $tools = $this->getTools();
@@ -1205,6 +1319,46 @@ class TraitsCoverageTest extends TestCase
         $this->assertStringContainsString('<gCredPresOper nItem="1">', $request);
         $this->assertStringNotContainsString('<gIBSCredPres>', $request);
         $this->assertStringNotContainsString('<gCBSCredPres>', $request);
+    }
+
+    public function test_sefazManifestacaoFiscoTransfCredIBS(): void
+    {
+        $tools = $this->getTools();
+
+        $std = new stdClass();
+        $std->chNFe = $this->makeChaveNFe55();
+        $std->nSeqEvento = 1;
+        $std->indDeferimento = 1;
+        $std->cMotivo = '1';
+        $std->xMotivo = 'Deferido pelo fisco';
+        $tools->sefazManifestacaoFiscoTransfCredIBS($std);
+        $request = $tools->getRequest();
+
+        $this->assertStringContainsString('<tpEvento>412120</tpEvento>', $request);
+        $this->assertStringContainsString('<tpAutor>5</tpAutor>', $request);
+        $this->assertStringContainsString('<indDeferimento>1</indDeferimento>', $request);
+        $this->assertStringContainsString('<cMotivo>1</cMotivo>', $request);
+        $this->assertStringContainsString('<xMotivo>Deferido pelo fisco</xMotivo>', $request);
+    }
+
+    public function test_sefazManifestacaoFiscoTransfCredCBS(): void
+    {
+        $tools = $this->getTools();
+
+        $std = new stdClass();
+        $std->chNFe = $this->makeChaveNFe55();
+        $std->nSeqEvento = 1;
+        $std->indDeferimento = 2;
+        $std->cMotivo = '2';
+        $std->xMotivo = 'Indeferido pelo fisco';
+        $tools->sefazManifestacaoFiscoTransfCredCBS($std);
+        $request = $tools->getRequest();
+
+        $this->assertStringContainsString('<tpEvento>412130</tpEvento>', $request);
+        $this->assertStringContainsString('<tpAutor>5</tpAutor>', $request);
+        $this->assertStringContainsString('<indDeferimento>2</indDeferimento>', $request);
+        $this->assertStringContainsString('<cMotivo>2</cMotivo>', $request);
+        $this->assertStringContainsString('<xMotivo>Indeferido pelo fisco</xMotivo>', $request);
     }
 
     public function test_sefazDestinoConsumoPessoal(): void
@@ -1235,6 +1389,7 @@ class TraitsCoverageTest extends TestCase
         $this->assertStringContainsString('<qConsumo>', $request);
         $this->assertStringContainsString('<uConsumo>PC</uConsumo>', $request);
         $this->assertStringContainsString('<DFeReferenciado>', $request);
+        $this->assertStringContainsString('<nItem>1</nItem>', $request);
     }
 
     public function test_sefazAceiteDebito(): void

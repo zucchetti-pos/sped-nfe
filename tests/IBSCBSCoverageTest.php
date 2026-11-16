@@ -1120,4 +1120,30 @@ class IBSCBSCoverageTest extends NFeTestCase
         $this->assertStringContainsString('<gIBSCredPres>', $xml);
         $this->assertStringNotContainsString('<gCBSCredPres>', $xml);
     }
+
+    public function test_taggCredPresOper_with_zero_vCredPres(): void
+    {
+        $std = new \stdClass();
+        $std->item = 1;
+        $std->vBCCredPres = 1000.00;
+        $std->cCredPres = '001';
+        $std->ibs_pCredPres = 5.0000;
+        $std->ibs_vCredPres = 0;
+        $std->cbs_pCredPres = 3.0000;
+        $std->cbs_vCredPres = 0;
+
+        $result = $this->make->taggCredPresOper($std);
+
+        $xml = $result->ownerDocument->saveXML($result);
+        $dom = new \DOMDocument();
+        $dom->loadXML($xml);
+        $gIBS = $dom->getElementsByTagName('gIBSCredPres')->item(0);
+        $this->assertNotNull($gIBS);
+        $this->assertSame('0.00', $gIBS->getElementsByTagName('vCredPres')->item(0)->nodeValue);
+        $this->assertNull($gIBS->getElementsByTagName('vCredPresCondSus')->item(0));
+        $gCBS = $dom->getElementsByTagName('gCBSCredPres')->item(0);
+        $this->assertNotNull($gCBS);
+        $this->assertSame('0.00', $gCBS->getElementsByTagName('vCredPres')->item(0)->nodeValue);
+        $this->assertNull($gCBS->getElementsByTagName('vCredPresCondSus')->item(0));
+    }
 }
