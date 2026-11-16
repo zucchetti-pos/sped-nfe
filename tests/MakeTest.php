@@ -1031,6 +1031,43 @@ class MakeTest extends TestCase
         $this->validarCriacaoTag2($std, $element, 'II');
     }
 
+    public function test_tagemit_shouldNotAddISUFEmitOnPL009(): void
+    {
+        $make = new \NFePHP\NFe\Make('9');
+        $std = new \stdClass();
+        $std->CRT = 3;
+        $std->ISUFEmit = '123456789';
+
+        $emit = $make->tagemit($std);
+
+        $this->assertSame(0, $emit->getElementsByTagName('ISUFEmit')->length);
+    }
+
+    public function test_tagemit_shouldAddISUFEmitOnPL010(): void
+    {
+        $make = new \NFePHP\NFe\Make('10');
+        $std = new \stdClass();
+        $std->CRT = 3;
+        $std->ISUFEmit = '123456789';
+
+        $emit = $make->tagemit($std);
+
+        $this->assertSame(1, $emit->getElementsByTagName('ISUFEmit')->length);
+        $this->assertSame('123456789', $emit->getElementsByTagName('ISUFEmit')->item(0)->nodeValue);
+    }
+
+    public function test_tagemit_shouldNotAddEmptyISUFEmitOnPL010(): void
+    {
+        $make = new \NFePHP\NFe\Make('10');
+
+        $std = new \stdClass();
+        $std->CRT = 3;
+
+        $emit = $make->tagemit($std);
+
+        $this->assertSame(0, $emit->getElementsByTagName('ISUFEmit')->length);
+    }
+
     public function test_tagISSQN(): void
     {
         $this->make->tagide(new \stdClass());

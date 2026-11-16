@@ -112,7 +112,7 @@ trait TraitTagEmit
             $identificador . "Código de Regime Tributário do emitente"
         );
         //NT 2005.002 v1.50
-        if (!empty($std->ISUFEmit)) {
+        if ($this->schema > 9 && !empty($std->ISUFEmit)) {
             $this->dom->addChild(
                 $this->emit,
                 "ISUFEmit",
