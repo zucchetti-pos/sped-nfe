@@ -403,11 +403,7 @@ class Tools extends ToolsCommon
         $consulta = "<distDFeInt xmlns=\"$this->urlPortal\" versao=\"$this->urlVersion\">"
             . "<tpAmb>" . $this->tpAmb . "</tpAmb>"
             . "<cUFAutor>$cUF</cUFAutor>";
-        if ($this->typePerson === 'J' || empty($this->typePerson)) {
-            $consulta .= "<CNPJ>$cnpj</CNPJ>";
-        } else {
-            $consulta .= "<CPF>$cnpj</CPF>";
-        }
+        $consulta .= $this->getAuthorTag($cnpj);
         $consulta .= "$tag"
             . "</distDFeInt>";
         //valida o xml da requisição
@@ -948,11 +944,7 @@ class Tools extends ToolsCommon
                 . "<infEvento Id=\"$eventId\">"
                 . "<cOrgao>$cOrgao</cOrgao>"
                 . "<tpAmb>$this->tpAmb</tpAmb>";
-            if ($this->typePerson === 'J') {
-                $request .= "<CNPJ>$cnpj</CNPJ>";
-            } else {
-                $request .= "<CPF>$cnpj</CPF>";
-            }
+            $request .= $this->getAuthorTag($cnpj);
             $request .= "<chNFe>$evt->chave</chNFe>"
                 . "<dhEvento>$dhEventoString</dhEvento>"
                 . "<tpEvento>$evt->tpEvento</tpEvento>"
@@ -1146,6 +1138,8 @@ class Tools extends ToolsCommon
             212110 => ['versao' => '1.00', 'nome' => 'envEvento'],
             212120 => ['versao' => '1.00', 'nome' => 'envEvento'],
             211124 => ['versao' => '1.00', 'nome' => 'envEvento'],
+            412120 => ['versao' => '1.00', 'nome' => 'envEvento'],
+            412130 => ['versao' => '1.00', 'nome' => 'envEvento'],
         ];
         $verEvento = $this->urlVersion;
         if (!empty($eventos[$tpEvento])) {
@@ -1191,6 +1185,8 @@ class Tools extends ToolsCommon
                     112130,
                     112140,
                     112150,
+                    412120,
+                    412130,
                     self::EVT_INSUCESSO_ENTREGA,
                     self::EVT_CANCELA_INSUCESSO_ENTREGA,
                 ]
@@ -1204,11 +1200,7 @@ class Tools extends ToolsCommon
             . "<infEvento Id=\"$eventId\">"
             . "<cOrgao>$cOrgao</cOrgao>"
             . "<tpAmb>$this->tpAmb</tpAmb>";
-        if ($this->typePerson === 'J') {
-            $request .= "<CNPJ>$cnpj</CNPJ>";
-        } else {
-            $request .= "<CPF>$cnpj</CPF>";
-        }
+        $request .= $this->getAuthorTag($cnpj);
         $request .= "<chNFe>$chave</chNFe>"
             . "<dhEvento>$dhEventoString</dhEvento>"
             . "<tpEvento>$tpEvento</tpEvento>"
@@ -1274,11 +1266,7 @@ class Tools extends ToolsCommon
         $request = "<distDFeInt xmlns=\"$this->urlPortal\" versao=\"$this->urlVersion\">"
             . "<tpAmb>" . $this->tpAmb . "</tpAmb>"
             . "<cUFAutor>$cUF</cUFAutor>";
-        if ($this->typePerson === 'J') {
-            $request .= "<CNPJ>$cnpj</CNPJ>";
-        } else {
-            $request .= "<CPF>$cnpj</CPF>";
-        }
+        $request .= $this->getAuthorTag($cnpj);
         $request .= "$tagChave"
             . "</distDFeInt>";
         //valida o xml da requisição
@@ -1547,6 +1535,14 @@ class Tools extends ToolsCommon
                 $std->alias = 'envEvento';
                 $std->desc = 'Manifestação sobre Pedido de Transferência de Crédito de CBS em Operação de Sucessão';
                 break;
+            case 412120:
+                $std->alias = 'envEvento';
+                $std->desc = 'Manifestação do Fisco sobre Pedido de Transferência de Crédito de IBS em Operação de Sucessão';
+                break;
+            case 412130:
+                $std->alias = 'envEvento';
+                $std->desc = 'Manifestação do Fisco sobre Pedido de Transferência de Crédito de CBS em Operação de Sucessão';
+                break;
             default:
                 $msg = "O código do tipo de evento informado não corresponde a "
                 . "nenhum evento estabelecido.";
@@ -1644,5 +1640,11 @@ class Tools extends ToolsCommon
             );
         }
         return $dom->saveXML($node);
+    }
+
+    protected function getAuthorTag(string $document): string
+    {
+        $tag = strlen($document) === 11 ? 'CPF' : 'CNPJ';
+        return "<$tag>$document</$tag>";
     }
 }
