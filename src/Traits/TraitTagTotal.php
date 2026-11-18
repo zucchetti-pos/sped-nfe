@@ -548,9 +548,6 @@ trait TraitTagTotal
         $identificador = "W31 ISTot -";
         $vIS = $std->vIS ?? ($this->stdIStot->vIS ?? 0);
         $this->stdTot->vIS = $vIS;
-        if (empty($vIS)) {
-            return null;
-        }
         $istot = $this->dom->createElement('ISTot');
         $this->dom->addChild(
             $istot,

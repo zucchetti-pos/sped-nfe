@@ -1348,13 +1348,15 @@ class DeepCoverageTest extends NFeTestCase
         $this->assertEquals('ISTot', $result->nodeName);
     }
 
-    public function testTagISTotReturnsNullWhenEmpty(): void
+    public function testTagISTotWithZeroValue(): void
     {
         $make = new Make();
         $std = new stdClass();
         $std->vIS = 0;
         $result = $make->tagISTot($std);
-        $this->assertNull($result);
+        $this->assertInstanceOf(\DOMElement::class, $result);
+        $this->assertEquals('ISTot', $result->nodeName);
+        $this->assertEquals('0.00', $result->getElementsByTagName('vIS')->item(0)->nodeValue);
     }
 
     public function testTagISSQNTotWithAllFields(): void
