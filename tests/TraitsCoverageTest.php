@@ -249,7 +249,7 @@ class TraitsCoverageTest extends TestCase
         $std->CRT = '3';
         $std->IE = '123456789012';
         $std->ISUFEmit = '12345678';
-        $emit = $this->make->tagemit($std);
+        $emit = (new Make('10'))->tagemit($std);
 
         $this->assertSame('12345678', $emit->getElementsByTagName('ISUFEmit')->item(0)->nodeValue);
     }
